@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLAS | Structured Discourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif
+        }
+
+        .cinzel {
+            font-family: 'Cinzel', serif
+        }
+
+        .fade-in {
+            animation: fade .8s ease forwards
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .float-slow {
+            animation: float 6s ease-in-out infinite
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-15px)
+            }
+        }
+
+        .glow-border:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, .15)
+        }
+    </style>
+</head>
+<body class="bg-black text-white overflow-x-hidden relative selection:bg-white selection:text-black">
+
+    <div class="fixed inset-0 pointer-events-none opacity-10 z-0"
+        style="background:url('data:image/svg+xml,%3Csvg viewBox=&quot;0 0 200 200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cfilter id=&quot;n&quot;%3E%3CfeTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.8&quot; numOctaves=&quot;2&quot; stitchTiles=&quot;stitch&quot;/%3E%3C/filter%3E%3Crect width=&quot;100%25&quot; height=&quot;100%25&quot; filter=&quot;url(%23n)&quot;/%3E%3C/svg%3E');">
+    </div>
+
+    <header class="relative z-20 border-b border-neutral-900 backdrop-blur-xl bg-black/70">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+                <img src="./Assets/Server/ServerIcon.webp"
+                    class="w-12 h-12 rounded-full border border-neutral-700 shadow-lg">
+                <div>
+                    <h1 class="cinzel text-2xl tracking-[6px] font-bold" data-en="ATLAS" data-ar="أطلس">ATLAS</h1>
+                    <span class="text-xs tracking-widest text-neutral-400" data-en="STRUCTURED DISCOURSE"
+                        data-ar="نقاش منظم">STRUCTURED DISCOURSE</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button id="langToggle"
+                    class="px-4 py-2 border border-neutral-700 hover:bg-white hover:text-black transition-all duration-300 text-sm tracking-wide">AR</button>
+                <a href="https://instagram.com/lilzeng1" target="_blank"
+                    class="px-4 py-2 border border-pink-600 text-pink-500 hover:bg-pink-600 hover:text-black transition-all duration-300 text-sm">@lilzeng1</a>
+            </div>
+
+        </div>
+    </header>
+
+    <section class="relative z-10 min-h-screen flex items-center justify-center text-center px-6">
+
+        <img src="./Assets/Server/ServerIcon.webp"
+            class="absolute opacity-20 w-[700px] max-w-full float-slow select-none pointer-events-none">
+
+        <div class="max-w-5xl fade-in">
+
+            <h2 class="cinzel text-5xl md:text-7xl tracking-[10px] font-black mb-6 bg-gradient-to-r from-white via-neutral-300 to-neutral-600 text-transparent bg-clip-text"
+                data-en="Where Thought Collides" data-ar="حيث تتصادم الأفكار">
+                Where Thought Collides
+            </h2>
+
+            <p class="text-neutral-400 text-lg md:text-xl mb-10 tracking-wide leading-relaxed"
+                data-en="Religious Debate • Philosophy • Critical Inquiry" data-ar="نقاش ديني • فلسفة • تفكير نقدي">
+                Religious Debate • Philosophy • Critical Inquiry
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-6">
+
+                <a href="#roles"
+                    class="px-8 py-4 bg-white text-black font-semibold tracking-wide hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl">
+                    <span data-en="Select Role" data-ar="اختر رتبتك">Select Role</span>
+                </a>
+
+                <a href="#rules"
+                    class="px-8 py-4 border border-white hover:bg-white hover:text-black transition-all duration-300 tracking-wide">
+                    <span data-en="Server Rules" data-ar="قوانين السيرفر">Server Rules</span>
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section
+        class="py-24 border-t border-neutral-900 bg-gradient-to-b from-black via-neutral-950 to-black relative z-10">
+        <div class="max-w-5xl mx-auto px-6 text-center space-y-12">
+
+            <div class="text-neutral-400 text-sm tracking-wide">
+                <i data-lucide="quote"></i>
+                <span data-en="The unexamined life is not worth living — Socrates"
+                    data-ar="الحياة غير المفحوصة لا تستحق أن تعاش — سقراط">
+                    The unexamined life is not worth living — Socrates
+                </span>
+            </div>
+
+            <div class="text-neutral-400 text-sm tracking-wide">
+                <i data-lucide="quote"></i>
+                <span data-en="Faith and reason are like two wings — Thomas Aquinas"
+                    data-ar="الإيمان والعقل جناحان يحلق بهما الإنسان — توما الأكويني">
+                    Faith and reason are like two wings — Thomas Aquinas
+                </span>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="roles" class="relative z-10 py-28 border-t border-neutral-900">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h3 class="cinzel text-4xl tracking-[6px] mb-16" data-en="Choose Identity" data-ar="اختر هويتك">Choose
+                Identity</h3>
+
+            <div class="grid md:grid-cols-4 gap-8">
+
+                <button data-role="1472375706141987017"
+                    class="role-btn border border-neutral-800 p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300 glow-border">
+                    <i data-lucide="cross" class="mx-auto mb-4"></i>
+                    <div class="text-xl font-semibold mb-2" data-en="Christian" data-ar="مسيحي">Christian</div>
+                </button>
+
+                <button data-role="1472344637548269568"
+                    class="role-btn border border-neutral-800 p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300 glow-border">
+                    <i data-lucide="moon-star" class="mx-auto mb-4"></i>
+                    <div class="text-xl font-semibold mb-2" data-en="Muslim" data-ar="مسلم">Muslim</div>
+                </button>
+
+                <button data-role="1472375858701406251"
+                    class="role-btn border border-neutral-800 p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300 glow-border">
+                    <i data-lucide="star" class="mx-auto mb-4"></i>
+                    <div class="text-xl font-semibold mb-2" data-en="Jew" data-ar="يهودي">Jew</div>
+                </button>
+
+                <button data-role="1472375946957816024"
+                    class="role-btn border border-neutral-800 p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300 glow-border">
+                    <i data-lucide="atom" class="mx-auto mb-4"></i>
+                    <div class="text-xl font-semibold mb-2" data-en="Non-Theist" data-ar="لاديني">Non-Theist</div>
+                </button>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="rules" class="relative z-10 py-32 border-t border-neutral-900">
+        <div class="max-w-6xl mx-auto px-6">
+            <h3 class="cinzel text-4xl tracking-[6px] text-center mb-16" data-en="Server Regulations"
+                data-ar="قوانين السيرفر">Server Regulations</h3>
+
+            <div class="grid md:grid-cols-2 gap-10">
+
+                <div
+                    class="border border-neutral-800 p-8 bg-neutral-900/40 backdrop-blur-md hover:border-white transition-all duration-300 glow-border">
+                    <h4 class="text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="shield"></i><span
+                            data-en="Respect First" data-ar="الاحترام أولاً">Respect First</span></h4>
+                    <p class="text-neutral-400 text-sm leading-relaxed"
+                        data-en="No insults, harassment, racism, threats or hate speech."
+                        data-ar="يمنع السب، الشتم، التهديد أو خطاب الكراهية.">
+                        No insults, harassment, racism, threats or hate speech.
+                    </p>
+                </div>
+
+                <div
+                    class="border border-neutral-800 p-8 bg-neutral-900/40 backdrop-blur-md hover:border-white transition-all duration-300 glow-border">
+                    <h4 class="text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="scales"></i><span
+                            data-en="Freedom ≠ Abuse" data-ar="الحرية ≠ إساءة">Freedom ≠ Abuse</span></h4>
+                    <p class="text-neutral-400 text-sm leading-relaxed"
+                        data-en="Debate ideas rationally. Provocation and incitement are prohibited."
+                        data-ar="ناقش الأفكار بعقلانية. يمنع الاستفزاز والتحريض.">
+                        Debate ideas rationally. Provocation and incitement are prohibited.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-neutral-900 py-10 text-center text-neutral-500 text-sm space-y-3">
+        <div class="flex justify-center gap-4">
+            <i data-lucide="cross"></i>
+            <i data-lucide="moon-star"></i>
+            <i data-lucide="star"></i>
+            <i data-lucide="atom"></i>
+        </div>
+        <div data-en="ATLAS Community • Structured Freedom • 2026" data-ar="مجتمع أطلس • حرية منظمة • 2026">
+            ATLAS Community • Structured Freedom • 2026
+        </div>
+        <div>
+            <a href="https://instagram.com/lilzeng1" target="_blank"
+                class="text-pink-500 hover:text-pink-400 transition">@lilzeng1</a>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons()
+        let lang = "en"
+        const toggle = document.getElementById("langToggle")
+        const elements = document.querySelectorAll("[data-en]")
+        toggle.addEventListener("click", () => {
+            lang = lang === "en" ? "ar" : "en"
+            document.documentElement.lang = lang
+            document.documentElement.dir = lang === "ar" ? "rtl" : "ltr"
+            elements.forEach(el => { el.textContent = el.getAttribute("data-" + lang) })
+            toggle.textContent = lang === "en" ? "AR" : "EN"
+        })
+
+        document.querySelectorAll(".role-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const roleId = btn.getAttribute("data-role")
+                await fetch("/api/assign-role", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roleId }) })
+                alert(lang === "en" ? "Role assigned successfully" : "تم إعطاء الرتبة بنجاح")
+            })
+        })
+    </script>
+
+</body>
+</html>
