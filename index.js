@@ -6,7 +6,6 @@ dotenv.config()
 
 const app = express()
 app.use(express.json())
-
 app.set("trust proxy", 1)
 
 app.use(session({
@@ -15,7 +14,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         secure: true,
-        sameSite: "none"
+        sameSite: "none",
+        httpOnly: true
     }
 }))
 
@@ -90,15 +90,21 @@ app.post("/api/assign-role", async (req, res) => {
     const userId = req.session.user.id
     if (!roleId) return res.status(400).json({ error: "Missing roleId" })
 
-    const url = `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userId}/roles/${roleId}`
+    const memberCheck = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userId}`, {
+        headers: { Authorization: `Bot ${BOT_TOKEN}` }
+    })
 
-    const result = await fetch(url, {
+    if (!memberCheck.ok) return res.status(403).json({ error: "User not in guild" })
+
+    const roleRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userId}/roles/${roleId}`, {
         method: "PUT",
         headers: { Authorization: `Bot ${BOT_TOKEN}` }
     })
 
-    if (result.ok) res.json({ success: true })
-    else res.status(result.status).json({ error: "Failed" })
+    if (roleRes.ok) return res.json({ success: true })
+    return res.status(roleRes.status).json({ error: "Failed to assign role" })
 })
 
-app.listen(process.env.PORT || 3000)
+app.listen(process.env.PORT || 3000), () => {
+    console.log("Server running")
+}
