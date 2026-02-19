@@ -1,31 +1,104 @@
-// Imports
 import express from "express"
-import bodyParser from "body-parser"
+import session from "express-session"
 import fetch from "node-fetch"
-import { Client, Intents } from "discord.js"
 import dotenv from "dotenv"
 dotenv.config()
 
-// App()
 const app = express()
-app.use(bodyParser.json())
+app.use(express.json())
 
-// .Env
-const BOT_TOKEN = process.env.BOT_TOKEN
-const GUILD_ID = process.env.GUILD_ID
+app.set("trust proxy", 1)
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] })
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: true,
+        sameSite: "none"
+    }
+}))
 
+const {
+    BOT_TOKEN,
+    CLIENT_ID,
+    CLIENT_SECRET,
+    GUILD_ID,
+    BASE_URL
+} = process.env
+
+const REDIRECT_URI = `${BASE_URL}/auth/callback`
+
+app.use(express.static("public"))
+
+app.get("/auth/login", (req, res) => {
+    const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify%20guilds.join`
+    res.redirect(url)
+})
+
+app.get("/auth/callback", async (req, res) => {
+    const code = req.query.code
+    if (!code) return res.redirect("/")
+
+    const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: "authorization_code",
+            code: code,
+            redirect_uri: REDIRECT_URI
+        })
+    })
+
+    const tokenData = await tokenRes.json()
+    if (!tokenData.access_token) return res.redirect("/")
+
+    const userRes = await fetch("https://discord.com/api/users/@me", {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    })
+
+    const userData = await userRes.json()
+
+    req.session.user = {
+        id: userData.id,
+        username: userData.username
+    }
+
+    await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userData.id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bot ${BOT_TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ access_token: tokenData.access_token })
+    })
+
+    res.redirect("/")
+})
+
+app.get("/api/user", (req, res) => {
+    if (!req.session.user) return res.json({ logged: false })
+    res.json({ logged: true, user: req.session.user })
+})
 
 app.post("/api/assign-role", async (req, res) => {
+    if (!req.session.user) return res.status(401).json({ error: "Not logged in" })
+
     const roleId = req.body.roleId
-    const userId = req.body.userId
-    if (!roleId || !userId) return res.status(400).send({ error: "Missing parameters" })
+    const userId = req.session.user.id
+    if (!roleId) return res.status(400).json({ error: "Missing roleId" })
+
     const url = `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userId}/roles/${roleId}`
-    const result = await fetch(url, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
-    if (result.ok) res.send({ success: true })
-    else res.status(result.status).send({ error: "Failed" })
+
+    const result = await fetch(url, {
+        method: "PUT",
+        headers: { Authorization: `Bot ${BOT_TOKEN}` }
+    })
+
+    if (result.ok) res.json({ success: true })
+    else res.status(result.status).json({ error: "Failed" })
 })
 
 app.listen(process.env.PORT || 3000)
-client.login(BOT_TOKEN)
