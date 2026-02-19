@@ -262,3 +262,155 @@ a {
         text-align: center
     }
 }
+
+button {
+    outline: none;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer
+}
+
+header,
+section,
+footer {
+    width: 100%
+}
+
+.fade-in {
+    animation: fade .6s ease forwards
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+        transform: translateY(10px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .85);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s
+}
+
+.modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto
+}
+
+.modal-box {
+    background: rgba(15, 15, 15, .95);
+    border: 1px solid #333;
+    padding: 40px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    transform: scale(.9);
+    transition: .3s
+}
+
+.modal-backdrop.active .modal-box {
+    transform: scale(1)
+}
+
+.modal-box h3 {
+    font-size: 20px;
+    margin-bottom: 20px
+}
+
+.modal-box p {
+    color: #aaa;
+    margin-bottom: 30px
+}
+
+.modal-box a {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #fff;
+    color: #000;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: .3s
+}
+
+.modal-box a:hover {
+    transform: scale(1.05)
+}
+
+.lang-switch {
+    border: 1px solid #444;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: .3s
+}
+
+.lang-switch:hover {
+    background: #fff;
+    color: #000
+}
+
+.roleBtn {
+    transition: .3s
+}
+
+.roleBtn:hover {
+    transform: translateY(-6px);
+    border-color: #fff
+}
+
+#mobileMenu a {
+    padding: 6px 0
+}
+
+footer a {
+    opacity: .8;
+    transition: .3s
+}
+
+footer a:hover {
+    opacity: 1
+}
+
+@media(max-width:600px) {
+    h2 {
+        font-size: 32px !important
+    }
+
+    nav {
+        gap: 12px
+    }
+}
+
+@media(max-width:500px) {
+    h2 {
+        font-size: 26px !important
+    }
+}
+
+@media(max-width:400px) {
+    h2 {
+        font-size: 22px !important
+    }
+}
+
+@media(max-width:300px) {
+    h2 {
+        font-size: 18px !important
+    }
+}
