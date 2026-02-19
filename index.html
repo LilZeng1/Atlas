@@ -6,159 +6,179 @@
     <title>ATLAS | Structured Discourse</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/lucide.min.css" />
-    <link rel="stylesheet" href="./Styles/Home.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="./Styles/Home.css">
 </head>
-<body class="bg-black text-white overflow-x-hidden flex flex-col min-h-screen">
-    <div class="fixed inset-0 pointer-events-none opacity-10 z-0"
-        style="background:url('data:image/svg+xml,%3Csvg viewBox=&quot;0 0 200 200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cfilter id=&quot;n&quot;%3E%3CfeTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.8&quot; numOctaves=&quot;2&quot; stitchTiles=&quot;stitch&quot;/%3E%3C/filter%3E%3Crect width=&quot;100%25&quot; height=&quot;100%25&quot; filter=&quot;url(%23n)&quot;/%3E%3C/svg%3E');">
+<body class="bg-black text-white font-[Inter] overflow-x-hidden selection:bg-white selection:text-black">
+
+    <div
+        class="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.08),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.05),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(255,255,255,0.04),transparent_50%)]">
     </div>
-    <header class="fixed w-full z-40 border-b border-neutral-900 backdrop-blur-xl bg-black/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-4">
-            <div class="flex items-center gap-3 sm:gap-4">
-                <img src="./Assets/Server/ServerIcon.webp"
-                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-neutral-700 shadow-lg">
-                <div>
-                    <h1 class="cinzel text-xl sm:text-2xl tracking-[4px] sm:tracking-[6px] font-bold" data-en="ATLAS"
-                        data-ar="أطلس">ATLAS</h1>
-                    <span class="text-xs sm:text-sm tracking-wide text-neutral-400" data-en="STRUCTURED DISCOURSE"
-                        data-ar="نقاش منظم">STRUCTURED DISCOURSE</span>
+    <div class="fixed inset-0 -z-20 opacity-10 bg-center bg-no-repeat bg-contain"
+        style="background-image:url('https://cdn.discordapp.com/icons/1468389283185557649/7a90d62e3671fe128bf9c2b4d95a5320.webp?size=1024')">
+    </div>
+
+    <header class="fixed top-0 w-full z-50 backdrop-blur-xl bg-black/70 border-b border-neutral-800">
+        <div class="max-w-7xl mx-auto px-6 lg:px-10">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-4">
+                    <img src="https://cdn.discordapp.com/icons/1468389283185557649/7a90d62e3671fe128bf9c2b4d95a5320.webp?size=1024"
+                        class="w-12 h-12 rounded-full border border-neutral-700 shadow-xl">
+                    <div>
+                        <h1 class="font-[Cinzel] tracking-[6px] text-xl font-bold">ATLAS</h1>
+                        <p class="text-xs tracking-[3px] text-neutral-400">STRUCTURED DISCOURSE</p>
+                    </div>
                 </div>
-            </div>
-            <div class="flex items-center gap-2 sm:gap-4">
-                <button id="langToggle"
-                    class="px-3 sm:px-4 py-1 sm:py-2 border border-neutral-700 hover:bg-white hover:text-black transition-all duration-300 text-xs sm:text-sm tracking-wide">AR</button>
-                <a href="https://instagram.com/lilzeng1" target="_blank"
-                    class="px-3 sm:px-4 py-1 sm:py-2 border border-pink-600 text-pink-500 hover:bg-pink-600 hover:text-black transition-all duration-300 text-xs sm:text-sm">@lilzeng1</a>
-                <button id="menuToggle"
-                    class="sm:hidden px-3 py-1 border border-neutral-700 hover:bg-white hover:text-black transition-all duration-300"><i
-                        class="fas fa-bars"></i></button>
+                <nav class="hidden md:flex items-center gap-10 text-sm tracking-wide">
+                    <a href="#about" class="hover:text-neutral-300 transition">About</a>
+                    <a href="#roles" class="hover:text-neutral-300 transition">Identity</a>
+                    <a href="#philosophy" class="hover:text-neutral-300 transition">Philosophy</a>
+                    <a href="#rules" class="hover:text-neutral-300 transition">Rules</a>
+                    <a href="#"
+                        class="px-5 py-2 rounded-full border border-neutral-700 hover:bg-white hover:text-black transition">Join</a>
+                </nav>
+                <button id="menuBtn"
+                    class="md:hidden p-2 border border-neutral-700 rounded-lg hover:bg-white hover:text-black transition">
+                    <i data-lucide="menu"></i>
+                </button>
             </div>
         </div>
-        <nav id="mobileMenu"
-            class="sm:hidden fixed top-16 left-0 w-full bg-black/90 backdrop-blur-lg border-b border-neutral-900 opacity-0 pointer-events-none transition-all duration-300 flex flex-col items-center gap-4 py-4">
-            <a href="#roles" class="text-white text-base sm:text-sm hover:text-pink-500 transition">Select Role</a>
-            <a href="#rules" class="text-white text-base sm:text-sm hover:text-pink-500 transition">Server Rules</a>
-        </nav>
+        <div id="mobileMenu"
+            class="hidden md:hidden flex flex-col bg-black/95 backdrop-blur-xl border-t border-neutral-800 px-6 py-6 space-y-6 text-sm tracking-wide">
+            <a href="#about">About</a>
+            <a href="#roles">Identity</a>
+            <a href="#philosophy">Philosophy</a>
+            <a href="#rules">Rules</a>
+        </div>
     </header>
-    <main class="flex-grow">
-        <section
-            class="relative z-10 min-h-screen flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32">
-            <img src="./Assets/Server/ServerIcon.webp"
-                class="absolute opacity-20 w-[200px] sm:w-[400px] md:w-[700px] max-w-full float-slow select-none pointer-events-none">
-            <div class="max-w-5xl fade-in">
-                <h2 class="cinzel text-3xl sm:text-5xl md:text-7xl tracking-[6px] sm:tracking-[8px] md:tracking-[10px] font-black mb-4 sm:mb-6 bg-gradient-to-r from-white via-neutral-300 to-neutral-600 text-transparent bg-clip-text"
-                    data-en="Where Thought Collides" data-ar="حيث تتصادم الأفكار">Where Thought Collides</h2>
-                <p class="text-neutral-400 text-sm sm:text-lg md:text-xl mb-6 sm:mb-10 tracking-wide leading-relaxed"
-                    data-en="Religious Debate • Philosophy • Critical Inquiry" data-ar="نقاش ديني • فلسفة • تفكير نقدي">
-                    Religious Debate • Philosophy • Critical Inquiry</p>
-                <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
-                    <a href="#roles"
-                        class="px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-semibold tracking-wide hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"><span
-                            data-en="Select Role" data-ar="اختر رتبتك">Select Role</span></a>
-                    <a href="#rules"
-                        class="px-6 sm:px-8 py-3 sm:py-4 border border-white hover:bg-white hover:text-black transition-all duration-300 tracking-wide"><span
-                            data-en="Server Rules" data-ar="قوانين السيرفر">Server Rules</span></a>
-                </div>
+
+    <main class="pt-32">
+
+        <section class="min-h-screen flex flex-col items-center justify-center text-center px-6">
+            <h2
+                class="font-[Cinzel] text-5xl md:text-7xl lg:text-8xl tracking-[10px] font-black bg-gradient-to-r from-white via-neutral-300 to-neutral-600 bg-clip-text text-transparent leading-tight">
+                WHERE THOUGHT COLLIDES</h2>
+            <p class="mt-8 max-w-3xl text-neutral-400 text-lg md:text-xl font-light tracking-wide">Religious dialectic.
+                Metaphysics. Ethics. Critical inquiry. A structured arena for disciplined disagreement.</p>
+            <div class="mt-12 flex flex-wrap justify-center gap-6">
+                <a href="#roles"
+                    class="px-8 py-4 bg-white text-black font-semibold rounded-xl hover:scale-105 active:scale-95 transition shadow-2xl shadow-white/10">Select
+                    Identity</a>
+                <a href="#about"
+                    class="px-8 py-4 border border-neutral-600 rounded-xl hover:bg-white hover:text-black transition">Explore</a>
             </div>
         </section>
-        <section
-            class="py-16 sm:py-24 border-t border-neutral-900 bg-gradient-to-b from-black via-neutral-950 to-black relative z-10">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-12">
-                <div class="text-neutral-400 text-sm sm:text-base tracking-wide flex items-center justify-center gap-2">
-                    <i data-lucide="quote"></i><span data-en="The unexamined life is not worth living — Socrates"
-                        data-ar="الحياة غير المفحوصة لا تستحق أن تعاش — سقراط">The unexamined life is not worth living —
-                        Socrates</span></div>
-                <div class="text-neutral-400 text-sm sm:text-base tracking-wide flex items-center justify-center gap-2">
-                    <i data-lucide="quote"></i><span data-en="Faith and reason are like two wings — Thomas Aquinas"
-                        data-ar="الإيمان والعقل جناحان يحلق بهما الإنسان — توما الأكويني">Faith and reason are like two
-                        wings — Thomas Aquinas</span></div>
-            </div>
-        </section>
-        <section id="roles" class="relative z-10 py-16 sm:py-28 border-t border-neutral-900">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-                <h3 class="cinzel text-3xl sm:text-4xl tracking-[4px] sm:tracking-[6px] mb-10 sm:mb-16"
-                    data-en="Choose Identity" data-ar="اختر هويتك">Choose Identity</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
-                    <button data-role="1472375706141987017"
-                        class="role-btn border border-neutral-800 p-6 sm:p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 hover:shadow-xl transition-all duration-300 glow-border">
-                        <i data-lucide="cross" class="mx-auto mb-2 sm:mb-4"></i>
-                        <div class="text-lg sm:text-xl font-semibold mb-1 sm:mb-2" data-en="Christian" data-ar="مسيحي">
-                            Christian</div>
-                    </button>
-                    <button data-role="1472344637548269568"
-                        class="role-btn border border-neutral-800 p-6 sm:p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 hover:shadow-xl transition-all duration-300 glow-border">
-                        <i data-lucide="moon-star" class="mx-auto mb-2 sm:mb-4"></i>
-                        <div class="text-lg sm:text-xl font-semibold mb-1 sm:mb-2" data-en="Muslim" data-ar="مسلم">
-                            Muslim</div>
-                    </button>
-                    <button data-role="1472375858701406251"
-                        class="role-btn border border-neutral-800 p-6 sm:p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 hover:shadow-xl transition-all duration-300 glow-border">
-                        <i data-lucide="star" class="mx-auto mb-2 sm:mb-4"></i>
-                        <div class="text-lg sm:text-xl font-semibold mb-1 sm:mb-2" data-en="Jew" data-ar="يهودي">Jew
-                        </div>
-                    </button>
-                    <button data-role="1472375946957816024"
-                        class="role-btn border border-neutral-800 p-6 sm:p-10 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 hover:shadow-xl transition-all duration-300 glow-border">
-                        <i data-lucide="atom" class="mx-auto mb-2 sm:mb-4"></i>
-                        <div class="text-lg sm:text-xl font-semibold mb-1 sm:mb-2" data-en="Non-Theist"
-                            data-ar="لاديني">Non-Theist</div>
-                    </button>
-                </div>
-            </div>
-        </section>
-        <section id="rules" class="relative z-10 py-16 sm:py-32 border-t border-neutral-900">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6">
-                <h3 class="cinzel text-3xl sm:text-4xl tracking-[4px] sm:tracking-[6px] text-center mb-10 sm:mb-16"
-                    data-en="Server Regulations" data-ar="قوانين السيرفر">Server Regulations</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
+
+        <section id="about"
+            class="py-32 border-t border-neutral-900 bg-gradient-to-b from-black via-neutral-950 to-black">
+            <div class="max-w-5xl mx-auto px-6 text-center">
+                <h3 class="font-[Cinzel] text-4xl tracking-[6px] mb-12">Intellectual Arena</h3>
+                <p class="text-neutral-400 leading-relaxed text-lg">ATLAS is designed as a disciplined environment for
+                    theological and philosophical confrontation. Dialogue is structured. Emotion is secondary.
+                    Argumentation is primary.</p>
+                <div class="grid md:grid-cols-3 gap-10 mt-20">
                     <div
-                        class="border border-neutral-800 p-6 sm:p-8 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:shadow-xl transition-all duration-300 glow-border">
-                        <h4 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 flex items-center gap-2"><i
-                                data-lucide="shield"></i><span data-en="Respect First" data-ar="الاحترام أولاً">Respect
-                                First</span></h4>
-                        <p class="text-neutral-400 text-sm sm:text-base leading-relaxed"
-                            data-en="No insults, harassment, racism, threats or hate speech."
-                            data-ar="يمنع السب، الشتم، التهديد أو خطاب الكراهية.">No insults, harassment, racism,
-                            threats or hate speech.</p>
+                        class="p-8 border border-neutral-800 rounded-2xl backdrop-blur-md bg-neutral-900/40 hover:border-white transition">
+                        <i data-lucide="brain" class="mx-auto mb-6"></i>
+                        <h4 class="font-semibold text-lg mb-4">Rational Discourse</h4>
+                        <p class="text-neutral-400 text-sm">Arguments grounded in logic, epistemology and textual
+                            analysis.</p>
                     </div>
                     <div
-                        class="border border-neutral-800 p-6 sm:p-8 bg-neutral-900/40 backdrop-blur-md hover:border-white hover:shadow-xl transition-all duration-300 glow-border">
-                        <h4 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 flex items-center gap-2"><i
-                                data-lucide="scales"></i><span data-en="Freedom ≠ Abuse"
-                                data-ar="الحرية ≠ إساءة">Freedom ≠ Abuse</span></h4>
-                        <p class="text-neutral-400 text-sm sm:text-base leading-relaxed"
-                            data-en="Debate ideas rationally. Provocation and incitement are prohibited."
-                            data-ar="ناقش الأفكار بعقلانية. يمنع الاستفزاز والتحريض.">Debate ideas rationally.
-                            Provocation and incitement are prohibited.</p>
+                        class="p-8 border border-neutral-800 rounded-2xl backdrop-blur-md bg-neutral-900/40 hover:border-white transition">
+                        <i data-lucide="book-open" class="mx-auto mb-6"></i>
+                        <h4 class="font-semibold text-lg mb-4">Scriptural Depth</h4>
+                        <p class="text-neutral-400 text-sm">Primary source engagement across traditions.</p>
+                    </div>
+                    <div
+                        class="p-8 border border-neutral-800 rounded-2xl backdrop-blur-md bg-neutral-900/40 hover:border-white transition">
+                        <i data-lucide="flame" class="mx-auto mb-6"></i>
+                        <h4 class="font-semibold text-lg mb-4">Constructive Conflict</h4>
+                        <p class="text-neutral-400 text-sm">Opposition without hostility. Precision without aggression.
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
+
+        <section id="roles" class="py-32 border-t border-neutral-900">
+            <div class="max-w-6xl mx-auto px-6 text-center">
+                <h3 class="font-[Cinzel] text-4xl tracking-[6px] mb-16">Choose Identity</h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <button data-role="christian"
+                        class="group p-10 border border-neutral-800 rounded-2xl bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300">
+                        <i data-lucide="cross" class="mx-auto mb-6 group-hover:scale-110 transition"></i>
+                        <p class="text-xl font-semibold">Christian</p>
+                    </button>
+                    <button data-role="muslim"
+                        class="group p-10 border border-neutral-800 rounded-2xl bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300">
+                        <i data-lucide="moon-star" class="mx-auto mb-6 group-hover:scale-110 transition"></i>
+                        <p class="text-xl font-semibold">Muslim</p>
+                    </button>
+                    <button data-role="jewish"
+                        class="group p-10 border border-neutral-800 rounded-2xl bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300">
+                        <i data-lucide="star" class="mx-auto mb-6 group-hover:scale-110 transition"></i>
+                        <p class="text-xl font-semibold">Jewish</p>
+                    </button>
+                    <button data-role="atheist"
+                        class="group p-10 border border-neutral-800 rounded-2xl bg-neutral-900/40 backdrop-blur-md hover:border-white hover:scale-105 transition-all duration-300">
+                        <i data-lucide="atom" class="mx-auto mb-6 group-hover:scale-110 transition"></i>
+                        <p class="text-xl font-semibold">Non-Theist</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="philosophy"
+            class="py-32 border-t border-neutral-900 bg-gradient-to-b from-black via-neutral-950 to-black">
+            <div class="max-w-4xl mx-auto px-6 text-center space-y-16">
+                <div class="italic font-[Playfair_Display] text-2xl text-neutral-300">“The unexamined life is not worth
+                    living.”</div>
+                <div class="italic font-[Playfair_Display] text-2xl text-neutral-300">“Faith and reason are like two
+                    wings on which the human spirit rises.”</div>
+            </div>
+        </section>
+
+        <section id="rules" class="py-32 border-t border-neutral-900">
+            <div class="max-w-6xl mx-auto px-6">
+                <h3 class="font-[Cinzel] text-4xl tracking-[6px] text-center mb-16">Regulations</h3>
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div
+                        class="p-10 border border-neutral-800 rounded-2xl bg-neutral-900/40 backdrop-blur-md hover:border-white transition">
+                        <h4 class="text-xl font-semibold mb-6 flex items-center gap-3"><i
+                                data-lucide="shield"></i>Respect</h4>
+                        <p class="text-neutral-400 leading-relaxed">Personal attacks, racism, harassment and threats are
+                            prohibited. Critique propositions, not persons.</p>
+                    </div>
+                    <div
+                        class="p-10 border border-neutral-800 rounded-2xl bg-neutral-900/40 backdrop-blur-md hover:border-white transition">
+                        <h4 class="text-xl font-semibold mb-6 flex items-center gap-3"><i
+                                data-lucide="scales"></i>Discipline</h4>
+                        <p class="text-neutral-400 leading-relaxed">Debate must remain structured and evidence-driven.
+                            Provocation and incitement result in moderation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
-    <footer
-        class="mt-auto border-t border-neutral-900 py-8 sm:py-10 text-center text-neutral-500 text-sm sm:text-base space-y-2 sm:space-y-3">
-        <div class="flex justify-center gap-2 sm:gap-4">
+
+    <footer class="border-t border-neutral-900 py-12 text-center text-neutral-500 text-sm">
+        <div class="flex justify-center gap-6 mb-6">
             <i data-lucide="cross"></i>
             <i data-lucide="moon-star"></i>
             <i data-lucide="star"></i>
             <i data-lucide="atom"></i>
         </div>
-        <div data-en="ATLAS Community • Structured Freedom • 2026" data-ar="مجتمع أطلس • حرية منظمة • 2026">ATLAS
-            Community • Structured Freedom • 2026</div>
-        <div><a href="https://instagram.com/lilzeng1" target="_blank"
-                class="text-pink-500 hover:text-pink-400 transition">@lilzeng1</a></div>
+        <p>ATLAS Community • Structured Freedom • 2026</p>
     </footer>
-    <script src="./Scripts/Home.js"></script>
+
     <script>
         lucide.createIcons()
-        const menuToggle = document.getElementById("menuToggle")
-        const mobileMenu = document.getElementById("mobileMenu")
-        menuToggle.addEventListener("click", () => { mobileMenu.classList.toggle("opacity-0"); mobileMenu.classList.toggle("pointer-events-none") })
+        document.getElementById("menuBtn").addEventListener("click", () => { document.getElementById("mobileMenu").classList.toggle("hidden") })
     </script>
+
 </body>
 </html>
