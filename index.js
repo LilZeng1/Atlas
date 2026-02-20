@@ -60,6 +60,8 @@ app.get("/api/user", (req, res) => {
 app.get("/auth/login", (req, res) => {
     if (req.query.returnTo) {
         req.session.returnTo = req.query.returnTo;
+    } else {
+        req.session.returnTo = "https://lilzeng1.github.io/Atlas";
     }
     req.session.save(() => {
         res.redirect(`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`);
@@ -67,7 +69,7 @@ app.get("/auth/login", (req, res) => {
 })
 
 app.get("/auth/logout", (req, res) => {
-    const returnTo = req.query.returnTo || "https://lilzeng1.github.io";
+    const returnTo = req.query.returnTo || "https://lilzeng1.github.io/Atlas";
     req.session.destroy(() => {
         res.redirect(returnTo);
     });
@@ -75,8 +77,8 @@ app.get("/auth/logout", (req, res) => {
 
 app.get("/api/auth/discord/redirect", async (req, res) => {
     const code = req.query.code
-    const returnTo = req.session.returnTo || "https://lilzeng1.github.io";
-    
+    const returnTo = req.session.returnTo || "https://lilzeng1.github.io/Atlas";
+
     if (!code) return res.redirect(returnTo)
 
     try {
@@ -101,7 +103,7 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
 
         const userData = await userRes.json()
         req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
-        
+
         req.session.save(() => {
             res.redirect(returnTo)
         })
@@ -138,7 +140,7 @@ app.post("/api/suggestions", async (req, res) => {
             await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8D/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
             await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8E/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
         }
-    } catch (e) {}
+    } catch (e) { }
 
     res.json({ success: true })
 })
