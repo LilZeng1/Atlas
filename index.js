@@ -12,10 +12,19 @@ const __dirname = path.dirname(__filename)
 
 const app = express()
 app.set("trust proxy", 1)
+
+app.use((req, res, next) => {
+    const origin = req.headers.origin || "*";
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    if (req.method === "OPTIONS") return res.sendStatus(200);
+    next();
+});
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-const isProduction = process.env.BASE_URL && process.env.BASE_URL.startsWith("https://")
 
 app.use(session({
     name: "atlas_session",
@@ -24,9 +33,9 @@ app.use(session({
     saveUninitialized: false,
     proxy: true,
     cookie: {
-        secure: isProduction,
+        secure: true,
         httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
+        sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }))
@@ -49,17 +58,26 @@ app.get("/api/user", (req, res) => {
 })
 
 app.get("/auth/login", (req, res) => {
-    res.redirect(`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`)
+    if (req.query.returnTo) {
+        req.session.returnTo = req.query.returnTo;
+    }
+    req.session.save(() => {
+        res.redirect(`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`);
+    });
 })
 
 app.get("/auth/logout", (req, res) => {
-    req.session.destroy()
-    res.redirect("/")
+    const returnTo = req.query.returnTo || "https://lilzeng1.github.io";
+    req.session.destroy(() => {
+        res.redirect(returnTo);
+    });
 })
 
 app.get("/api/auth/discord/redirect", async (req, res) => {
     const code = req.query.code
-    if (!code) return res.redirect("/")
+    const returnTo = req.session.returnTo || "https://lilzeng1.github.io";
+    
+    if (!code) return res.redirect(returnTo)
 
     try {
         const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
@@ -75,7 +93,7 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
         })
 
         const tokenData = await tokenRes.json()
-        if (!tokenData.access_token) return res.redirect("/")
+        if (!tokenData.access_token) return res.redirect(returnTo)
 
         const userRes = await fetch("https://discord.com/api/users/@me", {
             headers: { Authorization: `Bearer ${tokenData.access_token}` }
@@ -83,9 +101,12 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
 
         const userData = await userRes.json()
         req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
-        res.redirect("/")
+        
+        req.session.save(() => {
+            res.redirect(returnTo)
+        })
     } catch (error) {
-        res.redirect("/")
+        res.redirect(returnTo)
     }
 })
 
@@ -117,7 +138,7 @@ app.post("/api/suggestions", async (req, res) => {
             await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8D/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
             await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8E/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
         }
-    } catch (e) { }
+    } catch (e) {}
 
     res.json({ success: true })
 })
