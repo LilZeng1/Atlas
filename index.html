@@ -12,141 +12,97 @@
 </head>
 <body class="bg-black text-white font-[Inter] overflow-x-hidden selection:bg-white selection:text-black">
 
-    <div class="fixed inset-0 z-0">
-        <img src="Assets/Server/ServerIcon.webp"
-            class="absolute top-1/2 left-1/2 w-[900px] max-w-none opacity-[0.04] -translate-x-1/2 -translate-y-1/2 blur-3xl select-none pointer-events-none">
-        <div class="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_70%)]">
-        </div>
+    <div class="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
+        <img src="Assets/Server/ServerIcon.webp" class="w-[800px] opacity-[0.07] blur-2xl animate-spaceFloat">
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
     </div>
 
-    <header class="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/40">
-        <nav class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-5">
-                <img src="Assets/Server/ServerIcon.webp" class="w-14 h-14 grayscale contrast-125">
-                <div class="leading-tight">
-                    <h1 class="font-[Cinzel] text-3xl tracking-[0.3em] font-bold">ATLAS</h1>
-                    <p class="text-xs tracking-[0.4em] opacity-60">STRUCTURED DISCOURSE</p>
+    <header class="relative z-50 border-b border-white/5 backdrop-blur-2xl bg-black/20 sticky top-0">
+        <nav class="max-w-7xl mx-auto px-8 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <img src="Assets/Server/ServerIcon.webp" class="w-12 h-12 grayscale brightness-150">
+                <div class="flex flex-col">
+                    <span class="font-[Cinzel] text-2xl tracking-[0.4em] font-black">ATLAS</span>
+                    <span class="text-[10px] tracking-[0.5em] opacity-40 uppercase">Structured Discourse</span>
                 </div>
             </div>
-            <div class="hidden md:flex items-center gap-10 text-sm tracking-widest">
-                <a href="#home" class="hover:opacity-100 opacity-60 transition">HOME</a>
-                <a href="#identity" class="hover:opacity-100 opacity-60 transition">IDENTITY</a>
-                <a href="#philosophy" class="hover:opacity-100 opacity-60 transition">PHILOSOPHY</a>
-                <a href="#rules" class="hover:opacity-100 opacity-60 transition">RULES</a>
+            <div class="hidden md:flex items-center gap-12 text-[11px] tracking-[0.3em] font-medium">
+                <a href="#home" class="hover:opacity-100 opacity-50 transition-all uppercase">Home</a>
+                <a href="#suggestions" class="hover:opacity-100 opacity-50 transition-all uppercase">Suggestions</a>
+                <a href="#rules" class="hover:opacity-100 opacity-50 transition-all uppercase">Rules</a>
             </div>
-            <div class="flex items-center gap-4">
-                <button id="langToggle"
-                    class="border border-white/20 px-4 py-2 text-xs tracking-widest hover:bg-white hover:text-black transition">AR</button>
+            <div class="flex items-center gap-6">
                 <button id="loginBtn"
-                    class="border border-white/20 px-6 py-2 text-xs tracking-widest hover:bg-white hover:text-black transition">LOGIN</button>
-                <button id="hamburger" class="md:hidden border border-white/20 px-3 py-2">☰</button>
+                    class="group relative px-8 py-3 overflow-hidden border border-white/10 rounded-full transition-all hover:border-white/40">
+                    <span class="relative z-10 text-[11px] tracking-[0.2em] font-bold uppercase" id="loginText">Login
+                        with Discord</span>
+                    <div
+                        class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    </div>
+                </button>
             </div>
         </nav>
-        <div id="mobileMenu"
-            class="hidden flex-col bg-black border-t border-white/10 px-6 py-6 gap-6 text-sm tracking-widest md:hidden">
-            <a href="#home">HOME</a>
-            <a href="#identity">IDENTITY</a>
-            <a href="#philosophy">PHILOSOPHY</a>
-            <a href="#rules">RULES</a>
-        </div>
     </header>
 
-    <section id="home" class="relative z-20 min-h-screen flex flex-col items-center justify-center text-center px-6">
-        <h2
-            class="font-[Cinzel] text-6xl md:text-8xl font-black tracking-[0.3em] leading-tight bg-gradient-to-r from-white via-white/70 to-white/30 bg-clip-text text-transparent animate-fadeUp">
-            WHERE THOUGHT COLLIDES
-        </h2>
-        <p class="mt-8 max-w-2xl text-lg md:text-xl opacity-60 tracking-wide">
-            Religious dialectic. Metaphysics. Ethics. Critical inquiry.
-        </p>
-        <div class="mt-14 flex flex-wrap justify-center gap-6">
-            <button class="px-10 py-4 bg-white text-black tracking-widest text-sm hover:scale-105 transition">
-                SELECT IDENTITY
-            </button>
-            <button
-                class="px-10 py-4 border border-white/30 tracking-widest text-sm hover:bg-white hover:text-black transition">
-                EXPLORE
-            </button>
-        </div>
-    </section>
-
-    <section id="identity" class="relative z-20 py-32 border-t border-white/10">
-        <div class="max-w-6xl mx-auto px-6">
-            <h3 class="font-[Cinzel] text-5xl tracking-[0.3em] text-center mb-20">IDENTITY</h3>
-            <div class="grid md:grid-cols-3 gap-12">
-                <button
-                    class="role-btn group border border-white/20 p-10 hover:bg-white hover:text-black transition flex flex-col items-center gap-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-70 group-hover:opacity-100"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-width="1.5" d="M12 2v20M5 9h14" />
-                    </svg>
-                    <span class="tracking-widest">CHRISTIAN</span>
-                </button>
-                <button
-                    class="role-btn group border border-white/20 p-10 hover:bg-white hover:text-black transition flex flex-col items-center gap-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-70 group-hover:opacity-100"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-width="1.5" d="M12 3a9 9 0 100 18 9 9 0 000-18z" />
-                    </svg>
-                    <span class="tracking-widest">JEW</span>
-                </button>
-                <button
-                    class="role-btn group border border-white/20 p-10 hover:bg-white hover:text-black transition flex flex-col items-center gap-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-70 group-hover:opacity-100"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-width="1.5" d="M4 12h16" />
-                    </svg>
-                    <span class="tracking-widest">NON-THEIST</span>
-                </button>
+    <main class="relative z-20">
+        <section id="home" class="min-h-[90vh] flex flex-col items-center justify-center text-center px-6">
+            <h2
+                class="font-[Cinzel] text-7xl md:text-[120px] font-black tracking-tighter leading-none animate-heroFade">
+                THINK.<br><span class="opacity-20">DISCOURSE.</span>
+            </h2>
+            <div class="mt-12 flex gap-4">
+                <a href="#suggestions"
+                    class="px-12 py-5 bg-white text-black font-bold text-xs tracking-[0.3em] rounded-full hover:scale-105 transition-transform">PROPOSE
+                    IDEA</a>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="philosophy" class="relative z-20 py-32 border-t border-white/10 bg-black/50 backdrop-blur-xl">
-        <div class="max-w-5xl mx-auto px-6 text-center">
-            <h3 class="font-[Cinzel] text-5xl tracking-[0.3em] mb-14">PHILOSOPHY</h3>
-            <p class="text-xl opacity-60 leading-relaxed">
-                Truth emerges from structured opposition. We reject noise. We reject chaos. We cultivate dialectic.
-            </p>
-        </div>
-    </section>
+        <section id="suggestions" class="py-32 border-t border-white/5">
+            <div class="max-w-5xl mx-auto px-6">
+                <div class="text-center mb-24">
+                    <h3 class="font-[Cinzel] text-5xl tracking-[0.2em] mb-4">SUGGESTIONS</h3>
+                    <p class="text-xs tracking-[0.4em] opacity-40">COMMUNITY DRIVEN EVOLUTION</p>
+                </div>
 
-    <section id="rules" class="relative z-20 py-32 border-t border-white/10">
-        <div class="max-w-6xl mx-auto px-6">
-            <h3 class="font-[Cinzel] text-5xl tracking-[0.3em] text-center mb-20">RULES</h3>
-            <div class="grid md:grid-cols-3 gap-12">
-                <div
-                    class="modal-trigger border border-white/20 p-10 hover:bg-white hover:text-black transition cursor-pointer">
-                    <h4 class="tracking-widest mb-6">RESPECT</h4>
-                    <p class="opacity-60">Critique ideas. Never attack individuals.</p>
+                <div class="relative group mb-20">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-white/0 via-white/10 to-white/0 rounded-[30px] blur opacity-25 group-focus-within:opacity-100 transition duration-1000">
+                    </div>
+                    <div class="relative bg-black/40 border border-white/10 rounded-[30px] p-8 backdrop-blur-md">
+                        <textarea id="suggestionInput"
+                            class="w-full bg-transparent border-none outline-none text-xl placeholder:text-white/10 resize-none min-h-[120px] font-light"
+                            placeholder="What should we change in the server?"></textarea>
+                        <div class="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
+                            <p class="text-[10px] tracking-widest opacity-30">REQUIRED: DISCORD LOGIN</p>
+                            <button id="submitSuggestion"
+                                class="px-10 py-4 bg-white text-black text-[10px] font-black tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all">SUBMIT
+                                SUGGESTION</button>
+                        </div>
+                    </div>
                 </div>
-                <div
-                    class="modal-trigger border border-white/20 p-10 hover:bg-white hover:text-black transition cursor-pointer">
-                    <h4 class="tracking-widest mb-6">DISCIPLINE</h4>
-                    <p class="opacity-60">Stay within intellectual boundaries.</p>
-                </div>
-                <div
-                    class="modal-trigger border border-white/20 p-10 hover:bg-white hover:text-black transition cursor-pointer">
-                    <h4 class="tracking-widest mb-6">CLARITY</h4>
-                    <p class="opacity-60">Arguments require evidence and coherence.</p>
+
+                <div id="suggestionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <footer class="relative z-20 border-t border-white/10 py-14 text-center text-sm tracking-widest opacity-50">
-        © 2026 ATLAS — Structured Discourse
+    <footer class="relative z-20 border-t border-white/5 py-20 flex flex-col items-center gap-8">
+        <a href="https://instagram.com/lilzeng1" target="_blank"
+            class="group flex flex-col items-center gap-4 transition-all hover:scale-110">
+            <div
+                class="w-16 h-16 rounded-2xl border border-white/10 flex items-center justify-center group-hover:border-white/40 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </div>
+            <span class="text-[10px] tracking-[0.5em] opacity-40 group-hover:opacity-100">@LILZENG1</span>
+        </a>
+        <p class="text-[10px] tracking-[0.4em] opacity-20">© 2026 ATLAS — ALL RIGHTS RESERVED</p>
     </footer>
-
-    <div id="modalBackdrop" class="modal-backdrop">
-        <div class="modal-box">
-            <h4 class="tracking-widest mb-6">DETAIL</h4>
-            <p id="modalContent" class="opacity-70 mb-8"></p>
-            <button id="closeModal"
-                class="px-8 py-3 bg-white text-black tracking-widest hover:scale-105 transition">CLOSE</button>
-        </div>
-    </div>
 
     <script src="./Scripts/Home.js"></script>
 </body>
