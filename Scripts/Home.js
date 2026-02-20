@@ -12,6 +12,13 @@ const popupTitle = document.getElementById('popupTitle')
 const popupMessage = document.getElementById('popupMessage')
 const closePopupBtn = document.getElementById('closePopupBtn')
 let user = null
+const urlParams = new URLSearchParams(window.location.search)
+const urlToken = urlParams.get('token')
+if (urlToken) {
+    localStorage.setItem('atlas_token', urlToken)
+    window.history.replaceState({}, document.title, window.location.pathname)
+}
+const getToken = () => localStorage.getItem('atlas_token')
 function showPopup(title, message) {
     popupTitle.innerText = title
     popupMessage.innerText = message
@@ -21,8 +28,12 @@ closePopupBtn.onclick = () => {
     customPopup.classList.remove('popup-visible')
 }
 async function checkAuth() {
+    const token = getToken()
+    if (!token) return setupLogin()
     try {
-        const res = await fetch(`${BACKEND_URL}/api/user`, { credentials: 'include' })
+        const res = await fetch(`${BACKEND_URL}/api/user`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
         if (!res.ok) throw new Error()
         const data = await res.json()
         if (data.logged) {
@@ -35,7 +46,8 @@ async function checkAuth() {
                 ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
                 : `https://cdn.discordapp.com/embed/avatars/0.png`
             logoutBtn.onclick = () => {
-                window.location.href = `${BACKEND_URL}/auth/logout?returnTo=${encodeURIComponent(window.location.href)}`
+                localStorage.removeItem('atlas_token')
+                window.location.href = `${BACKEND_URL}/auth/logout?token=${token}&returnTo=${encodeURIComponent(window.location.href)}`
             }
         } else {
             setupLogin()
@@ -45,6 +57,7 @@ async function checkAuth() {
     }
 }
 function setupLogin() {
+    localStorage.removeItem('atlas_token')
     loginBtn.classList.remove('hidden')
     userProfile.classList.add('hidden')
     userProfile.classList.remove('flex')
@@ -54,7 +67,7 @@ function setupLogin() {
 }
 async function loadSuggestions() {
     try {
-        const res = await fetch(`${BACKEND_URL}/api/suggestions`, { credentials: 'include' })
+        const res = await fetch(`${BACKEND_URL}/api/suggestions`)
         const list = await res.json()
         suggestionsContainer.innerHTML = ''
         if (list.length === 0) {
@@ -95,11 +108,14 @@ function renderCard(data) {
 }
 async function vote(id, type) {
     if (!user) return showPopup('Action Required', 'You must log in to Discord to interact with suggestions!')
+    const token = getToken()
     try {
         const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ id, type })
         })
         if (res.ok) loadSuggestions()
@@ -111,13 +127,16 @@ submitSuggestion.onclick = async () => {
     if (!user) return showPopup('Unauthorized', 'Please log in to Discord to submit an idea.')
     const text = suggestionInput.value.trim()
     if (text.length < 5) return showPopup('Content Too Short', 'Please provide a more detailed suggestion.')
+    const token = getToken()
     submitSuggestion.disabled = true
     submitSuggestion.innerText = "SENDING..."
     try {
         const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ text })
         })
         if (res.ok) {
