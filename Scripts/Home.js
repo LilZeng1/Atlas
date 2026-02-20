@@ -74,7 +74,7 @@ function renderCard(data) {
 }
 
 async function vote(id, type) {
-    if (!user) return showPopup('Access Denied', 'You need to log in first!');
+    if (!user) return showPopup('Action Required', 'You must log in to Discord to interact with suggestions!');
     await fetch(`${BACKEND_URL}/api/suggestions/react`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,7 +85,7 @@ async function vote(id, type) {
 }
 
 submitSuggestion.onclick = async () => {
-    if (!user) return showPopup('Unauthorized', 'You cannot submit a suggestion without logging in.');
+    if (!user) return showPopup('Unauthorized', 'Please log in to Discord to submit an idea.');
     const text = suggestionInput.value.trim();
     if (text.length < 5) return showPopup('Content Too Short', 'Please provide a more detailed suggestion.');
 
