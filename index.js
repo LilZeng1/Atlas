@@ -15,11 +15,11 @@ app.set("trust proxy", 1)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-const isProduction = process.env.BASE_URL.startsWith("https://")
+const isProduction = process.env.BASE_URL && process.env.BASE_URL.startsWith("https://")
 
 app.use(session({
     name: "atlas_session",
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "atlas_secret_key",
     resave: false,
     saveUninitialized: false,
     proxy: true,
@@ -61,26 +61,32 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
     const code = req.query.code
     if (!code) return res.redirect("/")
 
-    const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-            grant_type: "authorization_code",
-            code: code,
-            redirect_uri: REDIRECT_URI
+    try {
+        const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: "authorization_code",
+                code: code,
+                redirect_uri: REDIRECT_URI
+            })
         })
-    })
 
-    const tokenData = await tokenRes.json()
-    const userRes = await fetch("https://discord.com/api/users/@me", {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` }
-    })
+        const tokenData = await tokenRes.json()
+        if (!tokenData.access_token) return res.redirect("/")
 
-    const userData = await userRes.json()
-    req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
-    res.redirect("/")
+        const userRes = await fetch("https://discord.com/api/users/@me", {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` }
+        })
+
+        const userData = await userRes.json()
+        req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
+        res.redirect("/")
+    } catch (error) {
+        res.redirect("/")
+    }
 })
 
 app.get("/api/suggestions", (req, res) => res.json(suggestions))
@@ -93,21 +99,25 @@ app.post("/api/suggestions", async (req, res) => {
 
     const avatar = `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
 
-    await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages`, {
-        method: "POST",
-        headers: { Authorization: `Bot ${BOT_TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-            embeds: [{
-                title: "New Suggestion",
-                description: text,
-                color: 0xffffff,
-                author: { name: req.session.user.username, icon_url: avatar }
-            }]
+    try {
+        const discordRes = await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages`, {
+            method: "POST",
+            headers: { Authorization: `Bot ${BOT_TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+                embeds: [{
+                    title: "New Suggestion",
+                    description: text,
+                    color: 0xffffff,
+                    author: { name: req.session.user.username, icon_url: avatar }
+                }]
+            })
         })
-    }).then(r => r.json()).then(m => {
-        fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8D/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
-        fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8E/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
-    })
+        const m = await discordRes.json()
+        if (m.id) {
+            await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8D/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
+            await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8E/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
+        }
+    } catch (e) { }
 
     res.json({ success: true })
 })
