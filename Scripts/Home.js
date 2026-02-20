@@ -24,17 +24,27 @@ closePopupBtn.onclick = () => {
 async function checkAuth() {
     try {
         const res = await fetch(`${BACKEND_URL}/api/user`, { credentials: 'include' });
+        if (!res.ok) throw new Error();
         const data = await res.json();
+        
         if (data.logged) {
             user = data.user;
             loginText.innerText = user.username.toUpperCase();
-            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/logout?returnTo=https://lilzeng1.github.io/Atlas`;
+            loginBtn.onclick = () => {
+                window.location.href = `${BACKEND_URL}/auth/logout?returnTo=${encodeURIComponent(window.location.href)}`;
+            };
         } else {
-            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=https://lilzeng1.github.io/Atlas`;
+            setupLogin();
         }
     } catch (e) {
-        loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=https://lilzeng1.github.io/Atlas`;
+        setupLogin();
     }
+}
+
+function setupLogin() {
+    loginBtn.onclick = () => {
+        window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`;
+    };
 }
 
 async function loadSuggestions() {
@@ -42,6 +52,9 @@ async function loadSuggestions() {
         const res = await fetch(`${BACKEND_URL}/api/suggestions`, { credentials: 'include' });
         const list = await res.json();
         suggestionsContainer.innerHTML = '';
+        if (list.length === 0) {
+            suggestionsContainer.innerHTML = '<p class="col-span-full text-center opacity-20 py-10 tracking-[0.5em]">NO SUGGESTIONS YET</p>';
+        }
         list.forEach(s => renderCard(s));
     } catch (e) { }
 }
@@ -53,18 +66,25 @@ function renderCard(data) {
 
     const card = document.createElement('div');
     card.className = 'suggestion-card flex flex-col gap-6';
+    
+    const isLiked = user && data.likes.includes(user.id);
+    const isDisliked = user && data.dislikes.includes(user.id);
+
     card.innerHTML = `
-        <div class="flex items-center gap-4">
-            <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10 shadow-lg">
-            <span class="text-[11px] font-bold tracking-[0.2em] opacity-90">${data.user.username}</span>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10 shadow-lg">
+                <span class="text-[11px] font-bold tracking-[0.2em] opacity-90">${data.user.username}</span>
+            </div>
+            <span class="text-[9px] opacity-20 font-mono">${new Date(data.timestamp || Date.now()).toLocaleDateString()}</span>
         </div>
-        <p class="text-white/80 font-light leading-relaxed">${data.text}</p>
+        <p class="text-white/80 font-light leading-relaxed text-lg italic">"${data.text}"</p>
         <div class="flex items-center gap-3 mt-auto">
-            <button class="vote-btn" onclick="vote('${data.id}', 'like')">
+            <button class="vote-btn ${isLiked ? 'active-like' : ''}" onclick="vote('${data.id}', 'like')">
                 <span class="text-sm">👍</span>
                 <span class="text-[10px] font-bold">${data.likes.length}</span>
             </button>
-            <button class="vote-btn" onclick="vote('${data.id}', 'dislike')">
+            <button class="vote-btn ${isDisliked ? 'active-dislike' : ''}" onclick="vote('${data.id}', 'dislike')">
                 <span class="text-sm">👎</span>
                 <span class="text-[10px] font-bold">${data.dislikes.length}</span>
             </button>
@@ -75,30 +95,49 @@ function renderCard(data) {
 
 async function vote(id, type) {
     if (!user) return showPopup('Action Required', 'You must log in to Discord to interact with suggestions!');
-    await fetch(`${BACKEND_URL}/api/suggestions/react`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ id, type })
-    });
-    loadSuggestions();
+    
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id, type })
+        });
+        if (res.ok) loadSuggestions();
+    } catch (e) {
+        showPopup('Error', 'Connection to server failed.');
+    }
 }
 
 submitSuggestion.onclick = async () => {
     if (!user) return showPopup('Unauthorized', 'Please log in to Discord to submit an idea.');
+    
     const text = suggestionInput.value.trim();
     if (text.length < 5) return showPopup('Content Too Short', 'Please provide a more detailed suggestion.');
 
-    const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ text })
-    });
+    submitSuggestion.disabled = true;
+    submitSuggestion.innerText = "SENDING...";
 
-    if (res.ok) {
-        suggestionInput.value = '';
-        loadSuggestions();
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ text })
+        });
+
+        if (res.ok) {
+            suggestionInput.value = '';
+            await loadSuggestions();
+            showPopup('Success', 'Your suggestion has been broadcasted to the nexus.');
+        } else {
+            showPopup('Failed', 'Session might have expired. Please refresh.');
+        }
+    } catch (e) {
+        showPopup('Error', 'Could not reach the server.');
+    } finally {
+        submitSuggestion.disabled = false;
+        submitSuggestion.innerText = "SUBMIT SUGGESTION";
     }
 };
 
