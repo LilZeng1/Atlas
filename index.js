@@ -11,9 +11,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
-
 app.set("trust proxy", 1)
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -33,28 +31,17 @@ app.use(session({
     }
 }))
 
-const BOT_TOKEN = process.env.BOT_TOKEN
-const CLIENT_ID = process.env.CLIENT_ID
-const CLIENT_SECRET = process.env.CLIENT_SECRET
-const GUILD_ID = process.env.GUILD_ID
-const BASE_URL = process.env.BASE_URL
-
-if (!BOT_TOKEN || !CLIENT_ID || !CLIENT_SECRET || !GUILD_ID || !BASE_URL) {
-    console.error("Missing ENV variables")
-    process.exit(1)
-}
-
+const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, GUILD_ID, BASE_URL, SUGGESTION_CHANNEL_ID } = process.env
 const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
 
 app.use("/Styles", express.static(path.join(__dirname, "Styles")))
 app.use("/Scripts", express.static(path.join(__dirname, "Scripts")))
+app.use("/Assets", express.static(path.join(__dirname, "Assets")))
 app.use(express.static(__dirname))
 
 let suggestions = []
 
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"))
-})
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")))
 
 app.get("/api/user", (req, res) => {
     if (!req.session.user) return res.json({ logged: false })
@@ -62,135 +49,80 @@ app.get("/api/user", (req, res) => {
 })
 
 app.get("/auth/login", (req, res) => {
-    const url =
-        `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}` +
-        `&response_type=code` +
-        `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-        `&scope=identify%20guilds.join`
-    res.redirect(url)
+    res.redirect(`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`)
+})
+
+app.get("/auth/logout", (req, res) => {
+    req.session.destroy()
+    res.redirect("/")
 })
 
 app.get("/api/auth/discord/redirect", async (req, res) => {
-    try {
-        const code = req.query.code
-        if (!code) return res.redirect("/")
+    const code = req.query.code
+    if (!code) return res.redirect("/")
 
-        const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-                grant_type: "authorization_code",
-                code: code,
-                redirect_uri: REDIRECT_URI
-            })
+    const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: "authorization_code",
+            code: code,
+            redirect_uri: REDIRECT_URI
         })
+    })
 
-        const tokenData = await tokenRes.json()
-        if (!tokenData.access_token) return res.redirect("/")
+    const tokenData = await tokenRes.json()
+    const userRes = await fetch("https://discord.com/api/users/@me", {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    })
 
-        const userRes = await fetch("https://discord.com/api/users/@me", {
-            headers: { Authorization: `Bearer ${tokenData.access_token}` }
-        })
-
-        const userData = await userRes.json()
-
-        req.session.user = {
-            id: userData.id,
-            username: userData.username,
-            avatar: userData.avatar
-        }
-
-        await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userData.id}`, {
-            method: "PUT",
-            headers: {
-                Authorization: `Bot ${BOT_TOKEN}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                access_token: tokenData.access_token
-            })
-        })
-
-        res.redirect("/")
-    } catch {
-        res.redirect("/")
-    }
+    const userData = await userRes.json()
+    req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
+    res.redirect("/")
 })
 
-app.get("/api/suggestions", (req, res) => {
-    res.json(suggestions)
-})
+app.get("/api/suggestions", (req, res) => res.json(suggestions))
 
 app.post("/api/suggestions", async (req, res) => {
-    if (!req.session.user) return res.status(401).json({ error: "Login required" })
-
+    if (!req.session.user) return res.status(401).json({ error: "Unauthorized" })
     const { text } = req.body
-    if (!text || text.length < 3) return res.status(400).json({ error: "Invalid text" })
-
-    const suggestion = {
-        id: Date.now().toString(),
-        text,
-        user: req.session.user,
-        likes: [],
-        dislikes: []
-    }
-
+    const suggestion = { id: Date.now().toString(), text, user: req.session.user, likes: [], dislikes: [] }
     suggestions.unshift(suggestion)
 
-    const avatarUrl =
-        `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
+    const avatar = `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
 
-    const messageRes = await fetch(
-        `https://discord.com/api/v10/channels/${process.env.SUGGESTION_CHANNEL_ID}/messages`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bot ${BOT_TOKEN}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                embeds: [{
-                    title: "New Suggestion",
-                    description: text,
-                    color: 16777215,
-                    author: {
-                        name: req.session.user.username,
-                        icon_url: avatarUrl
-                    }
-                }]
-            })
-        }
-    )
-
-    const messageData = await messageRes.json()
-
-    await fetch(
-        `https://discord.com/api/v10/channels/${process.env.SUGGESTION_CHANNEL_ID}/messages/${messageData.id}/reactions/%F0%9F%91%8D/@me`,
-        { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } }
-    )
-
-    await fetch(
-        `https://discord.com/api/v10/channels/${process.env.SUGGESTION_CHANNEL_ID}/messages/${messageData.id}/reactions/%F0%9F%91%8E/@me`,
-        { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } }
-    )
+    await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages`, {
+        method: "POST",
+        headers: { Authorization: `Bot ${BOT_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+            embeds: [{
+                title: "New Suggestion",
+                description: text,
+                color: 0xffffff,
+                author: { name: req.session.user.username, icon_url: avatar }
+            }]
+        })
+    }).then(r => r.json()).then(m => {
+        fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8D/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
+        fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8E/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
+    })
 
     res.json({ success: true })
 })
 
 app.post("/api/suggestions/react", (req, res) => {
-    if (!req.session.user) return res.status(401).json({ error: "Login required" })
-
+    if (!req.session.user) return res.status(401).json({ error: "Unauthorized" })
     const { id, type } = req.body
-    const suggestion = suggestions.find(s => s.id === id)
-    if (!suggestion) return res.status(404).json({ error: "Not found" })
+    const s = suggestions.find(x => x.id === id)
+    if (!s) return res.status(404).json({ error: "Not found" })
 
-    suggestion.likes = suggestion.likes.filter(u => u !== req.session.user.id)
-    suggestion.dislikes = suggestion.dislikes.filter(u => u !== req.session.user.id)
+    s.likes = s.likes.filter(u => u !== req.session.user.id)
+    s.dislikes = s.dislikes.filter(u => u !== req.session.user.id)
 
-    if (type === "like") suggestion.likes.push(req.session.user.id)
-    if (type === "dislike") suggestion.dislikes.push(req.session.user.id)
+    if (type === "like") s.likes.push(req.session.user.id)
+    else s.dislikes.push(req.session.user.id)
 
     res.json({ success: true })
 })
