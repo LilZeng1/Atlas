@@ -14,8 +14,10 @@ const app = express()
 app.set("trust proxy", 1)
 
 app.use((req, res, next) => {
-    const origin = req.headers.origin || "*";
-    res.header("Access-Control-Allow-Origin", origin);
+    const origin = req.headers.origin;
+    if (origin && (origin.includes("github.io") || origin.includes("localhost"))) {
+        res.header("Access-Control-Allow-Origin", origin);
+    }
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
@@ -29,7 +31,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(session({
     name: "atlas_session",
     secret: process.env.SESSION_SECRET || "atlas_secret_key",
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     proxy: true,
     cookie: {
@@ -40,37 +42,26 @@ app.use(session({
     }
 }))
 
-const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, GUILD_ID, BASE_URL, SUGGESTION_CHANNEL_ID } = process.env
+const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, BASE_URL, SUGGESTION_CHANNEL_ID } = process.env
 const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
-
-app.use("/Styles", express.static(path.join(__dirname, "Styles")))
-app.use("/Scripts", express.static(path.join(__dirname, "Scripts")))
-app.use("/Assets", express.static(path.join(__dirname, "Assets")))
-app.use(express.static(__dirname))
 
 let suggestions = []
 
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")))
-
 app.get("/api/user", (req, res) => {
-    if (!req.session.user) return res.json({ logged: false })
+    if (!req.session.user) return res.status(401).json({ logged: false })
     res.json({ logged: true, user: req.session.user })
 })
 
 app.get("/auth/login", (req, res) => {
-    if (req.query.returnTo) {
-        req.session.returnTo = req.query.returnTo;
-    } else {
-        req.session.returnTo = "https://lilzeng1.github.io/Atlas";
-    }
-    req.session.save(() => {
-        res.redirect(`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`);
-    });
+    req.session.returnTo = req.query.returnTo || "https://lilzeng1.github.io/Atlas";
+    const discordUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`;
+    req.session.save(() => res.redirect(discordUrl));
 })
 
 app.get("/auth/logout", (req, res) => {
     const returnTo = req.query.returnTo || "https://lilzeng1.github.io/Atlas";
     req.session.destroy(() => {
+        res.clearCookie("atlas_session", { sameSite: 'none', secure: true });
         res.redirect(returnTo);
     });
 })
@@ -104,9 +95,7 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
         const userData = await userRes.json()
         req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
 
-        req.session.save(() => {
-            res.redirect(returnTo)
-        })
+        req.session.save(() => res.redirect(returnTo))
     } catch (error) {
         res.redirect(returnTo)
     }
@@ -117,10 +106,21 @@ app.get("/api/suggestions", (req, res) => res.json(suggestions))
 app.post("/api/suggestions", async (req, res) => {
     if (!req.session.user) return res.status(401).json({ error: "Unauthorized" })
     const { text } = req.body
-    const suggestion = { id: Date.now().toString(), text, user: req.session.user, likes: [], dislikes: [] }
+    if (!text || text.length < 5) return res.status(400).json({ error: "Too short" })
+
+    const suggestion = { 
+        id: Date.now().toString(), 
+        text, 
+        user: req.session.user, 
+        likes: [], 
+        dislikes: [],
+        timestamp: new Date()
+    }
     suggestions.unshift(suggestion)
 
-    const avatar = `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
+    const avatar = req.session.user.avatar 
+        ? `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`;
 
     try {
         const discordRes = await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages`, {
@@ -128,10 +128,12 @@ app.post("/api/suggestions", async (req, res) => {
             headers: { Authorization: `Bot ${BOT_TOKEN}`, "Content-Type": "application/json" },
             body: JSON.stringify({
                 embeds: [{
-                    title: "New Suggestion",
+                    title: "✨ Yeni Öneri",
                     description: text,
-                    color: 0xffffff,
-                    author: { name: req.session.user.username, icon_url: avatar }
+                    color: 0x000000,
+                    author: { name: req.session.user.username, icon_url: avatar },
+                    footer: { text: "ATLAS Discourse System" },
+                    timestamp: new Date()
                 }]
             })
         })
@@ -157,7 +159,7 @@ app.post("/api/suggestions/react", (req, res) => {
     if (type === "like") s.likes.push(req.session.user.id)
     else s.dislikes.push(req.session.user.id)
 
-    res.json({ success: true })
+    res.json({ success: true, likes: s.likes.length, dislikes: s.dislikes.length })
 })
 
 app.listen(process.env.PORT || 3000)
