@@ -34,6 +34,8 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET
 const GUILD_ID = process.env.GUILD_ID
 const BASE_URL = process.env.BASE_URL
 
+const SUGGESTION_CHANNEL_ID = "1474169182852743230"
+
 if (!BOT_TOKEN || !CLIENT_ID || !CLIENT_SECRET || !GUILD_ID || !BASE_URL) {
     console.error("ENV MISSING")
     process.exit(1)
@@ -42,6 +44,8 @@ if (!BOT_TOKEN || !CLIENT_ID || !CLIENT_SECRET || !GUILD_ID || !BASE_URL) {
 const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
 
 app.use("/Styles", express.static(path.join(__dirname, "Styles")))
+
+let suggestions = []
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"))
@@ -75,11 +79,7 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
         })
 
         const tokenData = await tokenRes.json()
-
-        if (!tokenData.access_token) {
-            console.error(tokenData)
-            return res.status(500).send("Token exchange failed")
-        }
+        if (!tokenData.access_token) return res.status(500).send("Token exchange failed")
 
         const userRes = await fetch("https://discord.com/api/users/@me", {
             headers: { Authorization: `Bearer ${tokenData.access_token}` }
@@ -93,7 +93,7 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
             avatar: userData.avatar
         }
 
-        const joinRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userData.id}`, {
+        await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userData.id}`, {
             method: "PUT",
             headers: {
                 Authorization: `Bot ${BOT_TOKEN}`,
@@ -104,44 +104,82 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
             })
         })
 
-        if (!joinRes.ok) {
-            const errText = await joinRes.text()
-            console.error("Guild join error:", errText)
-        }
-
         res.redirect("/")
-    } catch (err) {
-        console.error("Callback crash:", err)
+    } catch {
         res.status(500).send("Internal Server Error")
     }
 })
 
-app.post("/api/assign-role", async (req, res) => {
-    try {
-        if (!req.session.user) return res.status(401).json({ error: "Not logged in" })
+app.get("/api/suggestions", (req, res) => {
+    res.json(suggestions)
+})
 
-        const roleId = req.body.roleId
-        if (!roleId) return res.status(400).json({ error: "Missing roleId" })
+app.post("/api/suggestions", async (req, res) => {
+    if (!req.session.user) return res.status(401).json({ error: "Login required" })
 
-        const roleRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${req.session.user.id}/roles/${roleId}`, {
-            method: "PUT",
-            headers: {
-                Authorization: `Bot ${BOT_TOKEN}`
-            }
-        })
+    const { text } = req.body
+    if (!text) return res.status(400).json({ error: "Missing text" })
 
-        if (!roleRes.ok) {
-            const errText = await roleRes.text()
-            return res.status(roleRes.status).json({ error: errText })
-        }
-
-        res.json({ success: true })
-    } catch (err) {
-        console.error("Role error:", err)
-        res.status(500).json({ error: "Role assign crash" })
+    const suggestion = {
+        id: Date.now().toString(),
+        text,
+        user: req.session.user,
+        likes: [],
+        dislikes: []
     }
+
+    suggestions.unshift(suggestion)
+
+    const avatarUrl = `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
+
+    const messageRes = await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bot ${BOT_TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            embeds: [{
+                title: "New Suggestion",
+                description: text,
+                color: 16777215,
+                author: {
+                    name: req.session.user.username,
+                    icon_url: avatarUrl
+                }
+            }]
+        })
+    })
+
+    const messageData = await messageRes.json()
+
+    await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${messageData.id}/reactions/%F0%9F%91%8D/@me`, {
+        method: "PUT",
+        headers: { Authorization: `Bot ${BOT_TOKEN}` }
+    })
+
+    await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${messageData.id}/reactions/%F0%9F%91%8E/@me`, {
+        method: "PUT",
+        headers: { Authorization: `Bot ${BOT_TOKEN}` }
+    })
+
+    res.json({ success: true })
 })
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log("Server running")
+app.post("/api/suggestions/react", (req, res) => {
+    if (!req.session.user) return res.status(401).json({ error: "Login required" })
+
+    const { id, type } = req.body
+    const suggestion = suggestions.find(s => s.id === id)
+    if (!suggestion) return res.status(404).json({ error: "Not found" })
+
+    suggestion.likes = suggestion.likes.filter(u => u !== req.session.user.id)
+    suggestion.dislikes = suggestion.dislikes.filter(u => u !== req.session.user.id)
+
+    if (type === "like") suggestion.likes.push(req.session.user.id)
+    if (type === "dislike") suggestion.dislikes.push(req.session.user.id)
+
+    res.json({ success: true })
 })
+
+app.listen(process.env.PORT || 3000)
