@@ -1,165 +1,146 @@
-import express from "express"
-import session from "express-session"
-import fetch from "node-fetch"
-import dotenv from "dotenv"
-import path from "path"
-import { fileURLToPath } from "url"
+const BACKEND_URL = 'https://atlas-5gev.onrender.com';
+const loginBtn = document.getElementById('loginBtn');
+const loginText = document.getElementById('loginText');
+const suggestionInput = document.getElementById('suggestionInput');
+const submitSuggestion = document.getElementById('submitSuggestion');
+const suggestionsContainer = document.getElementById('suggestionsContainer');
+const customPopup = document.getElementById('customPopup');
+const popupTitle = document.getElementById('popupTitle');
+const popupMessage = document.getElementById('popupMessage');
+const closePopupBtn = document.getElementById('closePopupBtn');
 
-dotenv.config()
+let user = null;
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+function showPopup(title, message) {
+    popupTitle.innerText = title;
+    popupMessage.innerText = message;
+    customPopup.classList.add('popup-visible');
+}
 
-const app = express()
-app.set("trust proxy", 1)
+closePopupBtn.onclick = () => {
+    customPopup.classList.remove('popup-visible');
+};
 
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (origin && (origin.includes("github.io") || origin.includes("localhost"))) {
-        res.header("Access-Control-Allow-Origin", origin);
-    }
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    if (req.method === "OPTIONS") return res.sendStatus(200);
-    next();
-});
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-app.use(session({
-    name: "atlas_session",
-    secret: process.env.SESSION_SECRET || "atlas_secret_key",
-    resave: true,
-    saveUninitialized: false,
-    proxy: true,
-    cookie: {
-        secure: true,
-        httpOnly: true,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 7
-    }
-}))
-
-const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, BASE_URL, SUGGESTION_CHANNEL_ID } = process.env
-const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
-
-let suggestions = []
-
-app.get("/api/user", (req, res) => {
-    if (!req.session.user) return res.status(401).json({ logged: false })
-    res.json({ logged: true, user: req.session.user })
-})
-
-app.get("/auth/login", (req, res) => {
-    req.session.returnTo = req.query.returnTo || "https://lilzeng1.github.io/Atlas";
-    const discordUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join`;
-    req.session.save(() => res.redirect(discordUrl));
-})
-
-app.get("/auth/logout", (req, res) => {
-    const returnTo = req.query.returnTo || "https://lilzeng1.github.io/Atlas";
-    req.session.destroy(() => {
-        res.clearCookie("atlas_session", { sameSite: 'none', secure: true });
-        res.redirect(returnTo);
-    });
-})
-
-app.get("/api/auth/discord/redirect", async (req, res) => {
-    const code = req.query.code
-    const returnTo = req.session.returnTo || "https://lilzeng1.github.io/Atlas";
-
-    if (!code) return res.redirect(returnTo)
-
+async function checkAuth() {
     try {
-        const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-                grant_type: "authorization_code",
-                code: code,
-                redirect_uri: REDIRECT_URI
-            })
-        })
-
-        const tokenData = await tokenRes.json()
-        if (!tokenData.access_token) return res.redirect(returnTo)
-
-        const userRes = await fetch("https://discord.com/api/users/@me", {
-            headers: { Authorization: `Bearer ${tokenData.access_token}` }
-        })
-
-        const userData = await userRes.json()
-        req.session.user = { id: userData.id, username: userData.username, avatar: userData.avatar }
-
-        req.session.save(() => res.redirect(returnTo))
-    } catch (error) {
-        res.redirect(returnTo)
+        const res = await fetch(`${BACKEND_URL}/api/user`, { credentials: 'include' });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        
+        if (data.logged) {
+            user = data.user;
+            loginText.innerText = user.username.toUpperCase();
+            loginBtn.onclick = () => {
+                window.location.href = `${BACKEND_URL}/auth/logout?returnTo=${encodeURIComponent(window.location.href)}`;
+            };
+        } else {
+            setupLogin();
+        }
+    } catch (e) {
+        setupLogin();
     }
-})
+}
 
-app.get("/api/suggestions", (req, res) => res.json(suggestions))
+function setupLogin() {
+    loginBtn.onclick = () => {
+        window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`;
+    };
+}
 
-app.post("/api/suggestions", async (req, res) => {
-    if (!req.session.user) return res.status(401).json({ error: "Unauthorized" })
-    const { text } = req.body
-    if (!text || text.length < 5) return res.status(400).json({ error: "Too short" })
+async function loadSuggestions() {
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/suggestions`, { credentials: 'include' });
+        const list = await res.json();
+        suggestionsContainer.innerHTML = '';
+        if (list.length === 0) {
+            suggestionsContainer.innerHTML = '<p class="col-span-full text-center opacity-20 py-10 tracking-[0.5em]">NO SUGGESTIONS YET</p>';
+        }
+        list.forEach(s => renderCard(s));
+    } catch (e) { }
+}
 
-    const suggestion = { 
-        id: Date.now().toString(), 
-        text, 
-        user: req.session.user, 
-        likes: [], 
-        dislikes: [],
-        timestamp: new Date()
-    }
-    suggestions.unshift(suggestion)
-
-    const avatar = req.session.user.avatar 
-        ? `https://cdn.discordapp.com/avatars/${req.session.user.id}/${req.session.user.avatar}.png`
+function renderCard(data) {
+    const avatar = data.user.avatar
+        ? `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/0.png`;
 
+    const card = document.createElement('div');
+    card.className = 'suggestion-card flex flex-col gap-6';
+    
+    const isLiked = user && data.likes.includes(user.id);
+    const isDisliked = user && data.dislikes.includes(user.id);
+
+    card.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10 shadow-lg">
+                <span class="text-[11px] font-bold tracking-[0.2em] opacity-90">${data.user.username}</span>
+            </div>
+            <span class="text-[9px] opacity-20 font-mono">${new Date(data.timestamp || Date.now()).toLocaleDateString()}</span>
+        </div>
+        <p class="text-white/80 font-light leading-relaxed text-lg italic">"${data.text}"</p>
+        <div class="flex items-center gap-3 mt-auto">
+            <button class="vote-btn ${isLiked ? 'active-like' : ''}" onclick="vote('${data.id}', 'like')">
+                <span class="text-sm">👍</span>
+                <span class="text-[10px] font-bold">${data.likes.length}</span>
+            </button>
+            <button class="vote-btn ${isDisliked ? 'active-dislike' : ''}" onclick="vote('${data.id}', 'dislike')">
+                <span class="text-sm">👎</span>
+                <span class="text-[10px] font-bold">${data.dislikes.length}</span>
+            </button>
+        </div>
+    `;
+    suggestionsContainer.appendChild(card);
+}
+
+async function vote(id, type) {
+    if (!user) return showPopup('Action Required', 'You must log in to Discord to interact with suggestions!');
+    
     try {
-        const discordRes = await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages`, {
-            method: "POST",
-            headers: { Authorization: `Bot ${BOT_TOKEN}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-                embeds: [{
-                    title: "✨ Yeni Öneri",
-                    description: text,
-                    color: 0x000000,
-                    author: { name: req.session.user.username, icon_url: avatar },
-                    footer: { text: "ATLAS Discourse System" },
-                    timestamp: new Date()
-                }]
-            })
-        })
-        const m = await discordRes.json()
-        if (m.id) {
-            await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8D/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
-            await fetch(`https://discord.com/api/v10/channels/${SUGGESTION_CHANNEL_ID}/messages/${m.id}/reactions/%F0%9F%91%8E/@me`, { method: "PUT", headers: { Authorization: `Bot ${BOT_TOKEN}` } })
+        const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id, type })
+        });
+        if (res.ok) loadSuggestions();
+    } catch (e) {
+        showPopup('Error', 'Connection to server failed.');
+    }
+}
+
+submitSuggestion.onclick = async () => {
+    if (!user) return showPopup('Unauthorized', 'Please log in to Discord to submit an idea.');
+    
+    const text = suggestionInput.value.trim();
+    if (text.length < 5) return showPopup('Content Too Short', 'Please provide a more detailed suggestion.');
+
+    submitSuggestion.disabled = true;
+    submitSuggestion.innerText = "SENDING...";
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ text })
+        });
+
+        if (res.ok) {
+            suggestionInput.value = '';
+            await loadSuggestions();
+            showPopup('Success', 'Your suggestion has been broadcasted to the nexus.');
+        } else {
+            showPopup('Failed', 'Session might have expired. Please refresh.');
         }
-    } catch (e) { }
+    } catch (e) {
+        showPopup('Error', 'Could not reach the server.');
+    } finally {
+        submitSuggestion.disabled = false;
+        submitSuggestion.innerText = "SUBMIT SUGGESTION";
+    }
+};
 
-    res.json({ success: true })
-})
-
-app.post("/api/suggestions/react", (req, res) => {
-    if (!req.session.user) return res.status(401).json({ error: "Unauthorized" })
-    const { id, type } = req.body
-    const s = suggestions.find(x => x.id === id)
-    if (!s) return res.status(404).json({ error: "Not found" })
-
-    s.likes = s.likes.filter(u => u !== req.session.user.id)
-    s.dislikes = s.dislikes.filter(u => u !== req.session.user.id)
-
-    if (type === "like") s.likes.push(req.session.user.id)
-    else s.dislikes.push(req.session.user.id)
-
-    res.json({ success: true, likes: s.likes.length, dislikes: s.dislikes.length })
-})
-
-app.listen(process.env.PORT || 3000)
+window.vote = vote;
+checkAuth();
+loadSuggestions();
