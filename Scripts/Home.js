@@ -28,12 +28,12 @@ async function checkAuth() {
         if (data.logged) {
             user = data.user;
             loginText.innerText = user.username.toUpperCase();
-            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/logout?returnTo=${encodeURIComponent(window.location.href)}`;
+            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/logout?returnTo=https://lilzeng1.github.io/Atlas`;
         } else {
-            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`;
+            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=https://lilzeng1.github.io/Atlas`;
         }
     } catch (e) {
-        loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`;
+        loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=https://lilzeng1.github.io/Atlas`;
     }
 }
 
@@ -74,7 +74,7 @@ function renderCard(data) {
 }
 
 async function vote(id, type) {
-    if (!user) return showPopup('Erişim Reddedildi', 'Kanka önce bi login olman lazım!');
+    if (!user) return showPopup('Access Denied', 'You need to log in first!');
     await fetch(`${BACKEND_URL}/api/suggestions/react`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,9 +85,9 @@ async function vote(id, type) {
 }
 
 submitSuggestion.onclick = async () => {
-    if (!user) return showPopup('Eksik Yetki', 'Giriş yapmadan öneri veremezsin canımın içi.');
+    if (!user) return showPopup('Unauthorized', 'You cannot submit a suggestion without logging in.');
     const text = suggestionInput.value.trim();
-    if (text.length < 5) return showPopup('Yetersiz İçerik', 'Biraz daha detaylı yaz kankam, ne istediğini anlayalım.');
+    if (text.length < 5) return showPopup('Content Too Short', 'Please provide a more detailed suggestion.');
 
     const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
         method: 'POST',
