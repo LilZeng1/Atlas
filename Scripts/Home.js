@@ -153,6 +153,45 @@ submitSuggestion.onclick = async () => {
         submitSuggestion.innerText = "SUBMIT SUGGESTION"
     }
 }
+
+class Vote {
+    constructor(id, type) {
+        this.id = id
+        this.type = type
+    }
+
+    // Async
+    async send() {
+        // ShowPopUp()
+        if (!user) return showPopup("Error Detected", "You must be logged in to vote on suggestions.")
+
+        if (this.type === "like") {
+            like++;
+        } else if (this.type === "dislike") {
+            dislike++;
+        }
+
+        try {
+            const token = getToken();
+            const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ id: this.id, type: this.type })
+            });
+            if (res.ok) {
+                await loadSuggestions();
+            } else {
+                showPopup("Error", "Failed to send your vote. Please try again.")
+            }
+        } catch (e) {
+            showPopup("Error", "Could not connect to the server. Please check your internet connection and try again.")
+        }
+    }
+}
+
 window.vote = vote
 checkAuth()
 loadSuggestions()
