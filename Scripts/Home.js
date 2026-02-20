@@ -1,10 +1,28 @@
+if (window.location.hostname.includes("github.io")) {
+    window.location.href = "https://atlas-5gev.onrender.com";
+}
+
 const loginBtn = document.getElementById('loginBtn');
 const loginText = document.getElementById('loginText');
 const suggestionInput = document.getElementById('suggestionInput');
 const submitSuggestion = document.getElementById('submitSuggestion');
 const suggestionsContainer = document.getElementById('suggestionsContainer');
+const customPopup = document.getElementById('customPopup');
+const popupTitle = document.getElementById('popupTitle');
+const popupMessage = document.getElementById('popupMessage');
+const closePopupBtn = document.getElementById('closePopupBtn');
 
 let user = null;
+
+function showPopup(title, message) {
+    popupTitle.innerText = title;
+    popupMessage.innerText = message;
+    customPopup.classList.add('popup-visible');
+}
+
+closePopupBtn.onclick = () => {
+    customPopup.classList.remove('popup-visible');
+};
 
 async function checkAuth() {
     try {
@@ -40,10 +58,10 @@ function renderCard(data) {
     card.className = 'suggestion-card flex flex-col gap-6';
     card.innerHTML = `
         <div class="flex items-center gap-4">
-            <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10">
-            <span class="text-[11px] font-bold tracking-[0.2em] opacity-80">${data.user.username}</span>
+            <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10 shadow-lg">
+            <span class="text-[11px] font-bold tracking-[0.2em] opacity-90">${data.user.username}</span>
         </div>
-        <p class="text-white/60 font-light leading-relaxed">${data.text}</p>
+        <p class="text-white/80 font-light leading-relaxed">${data.text}</p>
         <div class="flex items-center gap-3 mt-auto">
             <button class="vote-btn" onclick="vote('${data.id}', 'like')">
                 <span class="text-sm">👍</span>
@@ -59,7 +77,7 @@ function renderCard(data) {
 }
 
 async function vote(id, type) {
-    if (!user) return alert('Kanka önce bi login olman lazım!');
+    if (!user) return showPopup('Erişim Reddedildi', 'Kanka önce bi login olman lazım!');
     await fetch('/api/suggestions/react', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,9 +87,9 @@ async function vote(id, type) {
 }
 
 submitSuggestion.onclick = async () => {
-    if (!user) return alert('Giriş yapmadan öneri veremezsin canımın içi.');
+    if (!user) return showPopup('Eksik Yetki', 'Giriş yapmadan öneri veremezsin canımın içi.');
     const text = suggestionInput.value.trim();
-    if (text.length < 5) return alert('Biraz daha detaylı yaz kankam.');
+    if (text.length < 5) return showPopup('Yetersiz İçerik', 'Biraz daha detaylı yaz kankam, ne istediğini anlayalım.');
 
     const res = await fetch('/api/suggestions', {
         method: 'POST',
