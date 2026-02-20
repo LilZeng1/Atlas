@@ -1,236 +1,153 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-black text-white overflow-x-hidden">
+<html lang="en" class="scroll-smooth bg-black text-white">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlas Server</title>
+    <title>ATLAS — Structured Discourse</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cinzel:ital@1&family=Gloock:wght@700&display=swap">
-    <style>
-        body {
-            font-family: 'Cinzel', serif;
-        }
-
-        @keyframes float-slow {
-
-            0%,
-            100% {
-                transform: translateY(0)
-            }
-
-            50% {
-                transform: translateY(-15px)
-            }
-        }
-
-        .float-slow {
-            animation: float-slow 8s ease-in-out infinite;
-        }
-
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fade-in 0.8s ease forwards;
-        }
-
-        @keyframes sparkleAnim {
-            0% {
-                opacity: 0;
-                transform: scale(0.5) translateY(0);
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1) translateY(-5px);
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(0.5) translateY(0);
-            }
-        }
-
-        .animate-sparkle {
-            animation: sparkleAnim calc(2s + 3 * var(--rand)) infinite;
-        }
-
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            opacity: 0;
-            pointer-events: none;
-            transition: .3s;
-        }
-
-        .modal-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-box {
-            background: rgba(20, 20, 20, 0.95);
-            border: 1px solid #333;
-            padding: 40px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 480px;
-            text-align: center;
-            transform: scale(.9);
-            transition: .3s;
-        }
-
-        .modal-backdrop.active .modal-box {
-            transform: scale(1);
-        }
-    </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./Styles/Home.css">
 </head>
-<body class="relative">
+<body class="bg-black text-white font-[Inter] overflow-x-hidden selection:bg-white selection:text-black">
 
-    <div id="sparkleContainer" class="fixed inset-0 pointer-events-none z-0"></div>
-
-    <nav class="flex justify-between items-center p-6 md:px-12 border-b border-gray-800 z-10 relative">
-        <div class="flex items-center gap-4">
-            <img src="Assets/Server/ServerIcon.webp" class="w-14 h-14 grayscale contrast-125 float-slow" alt="Logo">
-            <div>
-                <h1 class="text-3xl md:text-4xl tracking-widest font-bold">ATLAS</h1>
-                <span class="text-sm md:text-base opacity-70">Server</span>
-            </div>
+    <div class="fixed inset-0 z-0">
+        <img src="Assets/Server/ServerIcon.webp"
+            class="absolute top-1/2 left-1/2 w-[900px] max-w-none opacity-[0.04] -translate-x-1/2 -translate-y-1/2 blur-3xl select-none pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_70%)]">
         </div>
-        <div class="flex items-center gap-4">
-            <button id="langToggle"
-                class="border border-gray-600 px-4 py-2 rounded hover:bg-white hover:text-black transition font-bold">AR/EN</button>
-            <button id="loginBtn"
-                class="border border-gray-600 px-5 py-2 rounded hover:bg-white hover:text-black transition font-bold">Login</button>
-            <button id="hamburger"
-                class="md:hidden border border-gray-600 px-3 py-2 rounded hover:bg-gray-700 transition">☰</button>
-        </div>
-    </nav>
-
-    <div id="mobileMenu"
-        class="hidden flex-col gap-6 p-6 border-b border-gray-800 md:hidden bg-gray-900 absolute w-full z-20">
-        <a href="#home" class="block px-4 py-2 hover:bg-gray-800 rounded">Home</a>
-        <a href="#rules" class="block px-4 py-2 hover:bg-gray-800 rounded">Rules</a>
-        <a href="#roles" class="block px-4 py-2 hover:bg-gray-800 rounded">Roles</a>
     </div>
 
-    <section id="home" class="text-center py-32 relative z-10">
-        <h2 class="text-5xl md:text-6xl tracking-widest fade-in italic font-bold">WELCOME TO ATLAS</h2>
-        <p class="mt-6 opacity-70 text-lg md:text-xl">Your gateway to a deep philosophical, void-inspired community</p>
-        <div class="flex justify-center gap-6 mt-12 flex-wrap">
+    <header class="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/40">
+        <nav class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-5">
+                <img src="Assets/Server/ServerIcon.webp" class="w-14 h-14 grayscale contrast-125">
+                <div class="leading-tight">
+                    <h1 class="font-[Cinzel] text-3xl tracking-[0.3em] font-bold">ATLAS</h1>
+                    <p class="text-xs tracking-[0.4em] opacity-60">STRUCTURED DISCOURSE</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-10 text-sm tracking-widest">
+                <a href="#home" class="hover:opacity-100 opacity-60 transition">HOME</a>
+                <a href="#identity" class="hover:opacity-100 opacity-60 transition">IDENTITY</a>
+                <a href="#philosophy" class="hover:opacity-100 opacity-60 transition">PHILOSOPHY</a>
+                <a href="#rules" class="hover:opacity-100 opacity-60 transition">RULES</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="langToggle"
+                    class="border border-white/20 px-4 py-2 text-xs tracking-widest hover:bg-white hover:text-black transition">AR</button>
+                <button id="loginBtn"
+                    class="border border-white/20 px-6 py-2 text-xs tracking-widest hover:bg-white hover:text-black transition">LOGIN</button>
+                <button id="hamburger" class="md:hidden border border-white/20 px-3 py-2">☰</button>
+            </div>
+        </nav>
+        <div id="mobileMenu"
+            class="hidden flex-col bg-black border-t border-white/10 px-6 py-6 gap-6 text-sm tracking-widest md:hidden">
+            <a href="#home">HOME</a>
+            <a href="#identity">IDENTITY</a>
+            <a href="#philosophy">PHILOSOPHY</a>
+            <a href="#rules">RULES</a>
+        </div>
+    </header>
+
+    <section id="home" class="relative z-20 min-h-screen flex flex-col items-center justify-center text-center px-6">
+        <h2
+            class="font-[Cinzel] text-6xl md:text-8xl font-black tracking-[0.3em] leading-tight bg-gradient-to-r from-white via-white/70 to-white/30 bg-clip-text text-transparent animate-fadeUp">
+            WHERE THOUGHT COLLIDES
+        </h2>
+        <p class="mt-8 max-w-2xl text-lg md:text-xl opacity-60 tracking-wide">
+            Religious dialectic. Metaphysics. Ethics. Critical inquiry.
+        </p>
+        <div class="mt-14 flex flex-wrap justify-center gap-6">
+            <button class="px-10 py-4 bg-white text-black tracking-widest text-sm hover:scale-105 transition">
+                SELECT IDENTITY
+            </button>
             <button
-                class="bg-white text-black px-8 py-3 rounded-full shadow-lg hover:scale-105 transition font-bold">Get
-                Started</button>
-            <button
-                class="border border-white px-8 py-3 rounded-full shadow-lg hover:bg-white hover:text-black transition font-bold">Learn
-                More</button>
+                class="px-10 py-4 border border-white/30 tracking-widest text-sm hover:bg-white hover:text-black transition">
+                EXPLORE
+            </button>
         </div>
     </section>
 
-    <section id="rules" class="py-20 px-6 md:px-12 border-t border-gray-800">
-        <h2 class="text-4xl md:text-5xl text-center mb-12 fade-in font-bold">Server Rules</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-gray-900 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition cursor-pointer modal-trigger">
-                <h3 class="text-xl font-bold mb-4">Respect</h3>
-                <p class="opacity-70">No insults, no harassment. Criticize ideas, not people.</p>
-            </div>
-            <div class="bg-gray-900 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition cursor-pointer modal-trigger">
-                <h3 class="text-xl font-bold mb-4">Freedom</h3>
-                <p class="opacity-70">Discuss beliefs respectfully. No incitement or provocation.</p>
-            </div>
-            <div class="bg-gray-900 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition cursor-pointer modal-trigger">
-                <h3 class="text-xl font-bold mb-4">Discipline</h3>
-                <p class="opacity-70">Post in correct channels. Sensitive topics require calm discussion.</p>
+    <section id="identity" class="relative z-20 py-32 border-t border-white/10">
+        <div class="max-w-6xl mx-auto px-6">
+            <h3 class="font-[Cinzel] text-5xl tracking-[0.3em] text-center mb-20">IDENTITY</h3>
+            <div class="grid md:grid-cols-3 gap-12">
+                <button
+                    class="role-btn group border border-white/20 p-10 hover:bg-white hover:text-black transition flex flex-col items-center gap-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-70 group-hover:opacity-100"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-width="1.5" d="M12 2v20M5 9h14" />
+                    </svg>
+                    <span class="tracking-widest">CHRISTIAN</span>
+                </button>
+                <button
+                    class="role-btn group border border-white/20 p-10 hover:bg-white hover:text-black transition flex flex-col items-center gap-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-70 group-hover:opacity-100"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-width="1.5" d="M12 3a9 9 0 100 18 9 9 0 000-18z" />
+                    </svg>
+                    <span class="tracking-widest">JEW</span>
+                </button>
+                <button
+                    class="role-btn group border border-white/20 p-10 hover:bg-white hover:text-black transition flex flex-col items-center gap-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-70 group-hover:opacity-100"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-width="1.5" d="M4 12h16" />
+                    </svg>
+                    <span class="tracking-widest">NON-THEIST</span>
+                </button>
             </div>
         </div>
     </section>
 
-    <section id="roles" class="py-20 px-6 md:px-12 border-t border-gray-800">
-        <h2 class="text-4xl md:text-5xl text-center mb-12 fade-in font-bold">Choose Your Roles</h2>
-        <div class="flex flex-wrap justify-center gap-6">
-            <button
-                class="role-btn border border-gray-600 px-6 py-3 rounded-2xl shadow-lg transition hover:-translate-y-1 hover:border-white font-bold">Christian</button>
-            <button
-                class="role-btn border border-gray-600 px-6 py-3 rounded-2xl shadow-lg transition hover:-translate-y-1 hover:border-white font-bold">Jew</button>
-            <button
-                class="role-btn border border-gray-600 px-6 py-3 rounded-2xl shadow-lg transition hover:-translate-y-1 hover:border-white font-bold">Atheist</button>
+    <section id="philosophy" class="relative z-20 py-32 border-t border-white/10 bg-black/50 backdrop-blur-xl">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h3 class="font-[Cinzel] text-5xl tracking-[0.3em] mb-14">PHILOSOPHY</h3>
+            <p class="text-xl opacity-60 leading-relaxed">
+                Truth emerges from structured opposition. We reject noise. We reject chaos. We cultivate dialectic.
+            </p>
         </div>
     </section>
 
-    <footer class="text-center py-16 border-t border-gray-800 opacity-70 text-sm md:text-base">
-        <p>© 2026 Atlas Server. All rights reserved.</p>
+    <section id="rules" class="relative z-20 py-32 border-t border-white/10">
+        <div class="max-w-6xl mx-auto px-6">
+            <h3 class="font-[Cinzel] text-5xl tracking-[0.3em] text-center mb-20">RULES</h3>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div
+                    class="modal-trigger border border-white/20 p-10 hover:bg-white hover:text-black transition cursor-pointer">
+                    <h4 class="tracking-widest mb-6">RESPECT</h4>
+                    <p class="opacity-60">Critique ideas. Never attack individuals.</p>
+                </div>
+                <div
+                    class="modal-trigger border border-white/20 p-10 hover:bg-white hover:text-black transition cursor-pointer">
+                    <h4 class="tracking-widest mb-6">DISCIPLINE</h4>
+                    <p class="opacity-60">Stay within intellectual boundaries.</p>
+                </div>
+                <div
+                    class="modal-trigger border border-white/20 p-10 hover:bg-white hover:text-black transition cursor-pointer">
+                    <h4 class="tracking-widest mb-6">CLARITY</h4>
+                    <p class="opacity-60">Arguments require evidence and coherence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="relative z-20 border-t border-white/10 py-14 text-center text-sm tracking-widest opacity-50">
+        © 2026 ATLAS — Structured Discourse
     </footer>
 
-    <div class="modal-backdrop" id="modalBackdrop">
+    <div id="modalBackdrop" class="modal-backdrop">
         <div class="modal-box">
-            <h3>Rule Details</h3>
-            <p id="modalContent" class="opacity-70 text-base md:text-lg">Detailed rule description here...</p>
-            <a href="#" id="closeModal"
-                class="inline-block px-6 py-3 bg-white text-black rounded-full font-bold shadow-lg hover:scale-105 transition mt-6">Close</a>
+            <h4 class="tracking-widest mb-6">DETAIL</h4>
+            <p id="modalContent" class="opacity-70 mb-8"></p>
+            <button id="closeModal"
+                class="px-8 py-3 bg-white text-black tracking-widest hover:scale-105 transition">CLOSE</button>
         </div>
     </div>
 
-    <script>
-        const hamburger = document.getElementById('hamburger');
-        const mobileMenu = document.getElementById('mobileMenu');
-        hamburger.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-
-        let arabicMode = false;
-        const langToggle = document.getElementById('langToggle');
-        langToggle.addEventListener('click', () => {
-            arabicMode = !arabicMode;
-            document.body.dir = arabicMode ? 'rtl' : 'ltr';
-            document.body.lang = arabicMode ? 'ar' : 'en';
-            document.querySelectorAll('h2,h3,p,button,a,span').forEach(el => {
-                if (arabicMode) { el.style.fontFamily = "'Gloock', serif"; } else { el.style.fontFamily = "'Cinzel', serif"; }
-            });
-        });
-
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            window.location.href = "https://discord.com/oauth2/authorize?client_id=1473775947298902243&response_type=code&redirect_uri=https%3A%2F%2Fatlas-5gev.onrender.com%2Fapi%2Fauth%2Fdiscord%2Fredirect&scope=identify+guilds+guilds.join";
-        });
-
-        document.querySelectorAll('.role-btn').forEach(btn => {
-            btn.addEventListener('click', () => { btn.classList.toggle('bg-white'); btn.classList.toggle('text-black'); });
-        });
-
-        const modal = document.getElementById('modalBackdrop');
-        const modalContent = document.getElementById('modalContent');
-        const closeModal = document.getElementById('closeModal');
-        document.querySelectorAll('.modal-trigger').forEach((card, i) => {
-            card.addEventListener('click', () => {
-                modalContent.textContent = card.querySelector('p').textContent;
-                modal.classList.add('active');
-            });
-        });
-        closeModal.addEventListener('click', () => { modal.classList.remove('active'); });
-
-        const sparkleContainer = document.getElementById('sparkleContainer');
-        for (let i = 0; i < 100; i++) {
-            const s = document.createElement('div');
-            s.className = 'absolute w-1.5 h-1.5 bg-white rounded-full animate-sparkle';
-            s.style.top = Math.random() * window.innerHeight + 'px';
-            s.style.left = Math.random() * window.innerWidth + 'px';
-            s.style.setProperty('--rand', Math.random());
-            sparkleContainer.appendChild(s);
-        }
-    </script>
-
+    <script src="./Scripts/Home.js"></script>
 </body>
 </html>
