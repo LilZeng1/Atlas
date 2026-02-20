@@ -1,7 +1,4 @@
-if (window.location.hostname.includes("github.io")) {
-    window.location.href = "https://atlas-5gev.onrender.com";
-}
-
+const BACKEND_URL = 'https://atlas-5gev.onrender.com';
 const loginBtn = document.getElementById('loginBtn');
 const loginText = document.getElementById('loginText');
 const suggestionInput = document.getElementById('suggestionInput');
@@ -26,23 +23,23 @@ closePopupBtn.onclick = () => {
 
 async function checkAuth() {
     try {
-        const res = await fetch('/api/user');
+        const res = await fetch(`${BACKEND_URL}/api/user`, { credentials: 'include' });
         const data = await res.json();
         if (data.logged) {
             user = data.user;
             loginText.innerText = user.username.toUpperCase();
-            loginBtn.onclick = () => window.location.href = '/auth/logout';
+            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/logout?returnTo=${encodeURIComponent(window.location.href)}`;
         } else {
-            loginBtn.onclick = () => window.location.href = '/auth/login';
+            loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`;
         }
     } catch (e) {
-        loginBtn.onclick = () => window.location.href = '/auth/login';
+        loginBtn.onclick = () => window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`;
     }
 }
 
 async function loadSuggestions() {
     try {
-        const res = await fetch('/api/suggestions');
+        const res = await fetch(`${BACKEND_URL}/api/suggestions`, { credentials: 'include' });
         const list = await res.json();
         suggestionsContainer.innerHTML = '';
         list.forEach(s => renderCard(s));
@@ -78,9 +75,10 @@ function renderCard(data) {
 
 async function vote(id, type) {
     if (!user) return showPopup('Erişim Reddedildi', 'Kanka önce bi login olman lazım!');
-    await fetch('/api/suggestions/react', {
+    await fetch(`${BACKEND_URL}/api/suggestions/react`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id, type })
     });
     loadSuggestions();
@@ -91,9 +89,10 @@ submitSuggestion.onclick = async () => {
     const text = suggestionInput.value.trim();
     if (text.length < 5) return showPopup('Yetersiz İçerik', 'Biraz daha detaylı yaz kankam, ne istediğini anlayalım.');
 
-    const res = await fetch('/api/suggestions', {
+    const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ text })
     });
 
