@@ -167,5 +167,23 @@
         </div>
     </div>
     <script src="./Scripts/Home.js"></script>
+    <script>
+        async function updateUI() {
+    const token = new URLSearchParams(window.location.search).get('token') || localStorage.getItem('atlas_token');
+    if (token) {
+        localStorage.setItem('atlas_token', token);
+        const res = await fetch(`${BACKEND_URL}/api/user`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.logged) {
+            // ... (diğer avatar/username kodları)
+            if (data.isStaff) {
+                document.getElementById('navDashboard').classList.remove('hidden');
+            }
+        }
+    }
+}
+    </script>
 </body>
 </html>
