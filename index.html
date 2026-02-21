@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-black text-white">
+<html lang="en" class="scroll-smooth bg-[#020202] text-white">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,51 +10,54 @@
         rel="stylesheet">
     <link rel="stylesheet" href="./Styles/Home.css">
 </head>
-<body class="bg-black text-white font-[Inter] overflow-x-hidden selection:bg-white selection:text-black">
+<body
+    class="bg-[#020202] text-white font-[Inter] overflow-x-hidden selection:bg-white selection:text-black min-h-screen flex flex-col">
     <div class="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
-        <div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent mix-blend-overlay"></div>
+        <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] mix-blend-screen">
+        </div>
         <img src="Assets/Server/ServerIcon.webp"
-            class="w-[400px] md:w-[800px] opacity-[0.05] blur-[40px] animate-spaceFloat"
+            class="w-[300px] md:w-[700px] opacity-[0.04] blur-[50px] animate-spaceFloat"
             onerror="this.style.display='none'">
-        <div class="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-[#020202]/95 to-[#020202]"></div>
     </div>
     <header
-        class="relative z-50 border-b border-white/5 backdrop-blur-3xl bg-black/50 sticky top-0 transition-all duration-300">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-8 h-20 sm:h-24 flex items-center justify-between">
-            <div class="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity group"
+        class="relative z-50 border-b border-white/5 backdrop-blur-3xl bg-black/40 sticky top-0 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <nav class="max-w-7xl mx-auto px-6 sm:px-10 h-20 sm:h-24 flex items-center justify-between">
+            <div class="flex items-center gap-5 cursor-pointer hover:opacity-80 transition-all duration-300 group"
                 onclick="window.scrollTo(0,0)">
                 <img src="Assets/Server/ServerIcon.webp"
-                    class="w-10 h-10 sm:w-14 sm:h-14 grayscale brightness-150 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] group-hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all"
+                    class="w-12 h-12 sm:w-14 sm:h-14 grayscale brightness-150 rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.08)] group-hover:shadow-[0_0_60px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-500"
                     onerror="this.style.display='none'">
-                <div class="flex flex-col">
+                <div class="flex flex-col justify-center">
                     <span
-                        class="font-[Cinzel] text-xl sm:text-3xl tracking-[0.3em] sm:tracking-[0.5em] font-black glow-text">ATLAS</span>
+                        class="font-[Cinzel] text-2xl sm:text-3xl tracking-[0.4em] sm:tracking-[0.5em] font-black glow-text">ATLAS</span>
                     <span
-                        class="hidden sm:block text-[9px] tracking-[0.6em] opacity-50 uppercase font-medium">Structured
+                        class="hidden sm:block text-[9px] tracking-[0.6em] opacity-40 uppercase font-medium mt-1">Structured
                         Discourse</span>
                 </div>
             </div>
-            <div class="hidden md:flex items-center gap-14 text-[10px] tracking-[0.4em] font-semibold">
+            <div class="hidden md:flex items-center gap-12 text-[10px] tracking-[0.5em] font-semibold">
                 <a href="#home" class="nav-link">Home</a>
                 <a href="#suggestions" class="nav-link">Suggestions</a>
-                <a href="Dashboard.html" id="navDashboard" class="nav-link hidden !text-red-400">Dashboard</a>
+                <a href="Dashboard.html" id="navDashboard"
+                    class="nav-link hidden !text-red-400 drop-shadow-[0_0_10px_rgba(248,113,113,0.5)]">Dashboard</a>
             </div>
-            <div class="flex items-center gap-4" id="authContainer">
+            <div class="flex items-center gap-5" id="authContainer">
                 <button id="loginBtn"
-                    class="premium-btn px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
-                    <span
-                        class="text-[10px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.3em] font-black uppercase">LOGIN</span>
+                    class="premium-btn px-8 sm:px-10 py-3 sm:py-3.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.02)] hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:-translate-y-0.5">
+                    <span class="text-[10px] sm:text-[11px] tracking-[0.3em] font-black uppercase">LOGIN</span>
                 </button>
-                <div id="userProfile" class="hidden items-center gap-3 sm:gap-5">
+                <div id="userProfile" class="hidden items-center gap-4">
                     <div
-                        class="flex items-center gap-3 bg-white/5 border border-white/10 py-1.5 pl-2 pr-5 rounded-full backdrop-blur-xl shadow-2xl transition-all hover:bg-white/10 hover:border-white/20">
+                        class="flex items-center gap-3 bg-white/5 border border-white/10 py-1.5 pl-2 pr-6 rounded-full backdrop-blur-xl shadow-2xl transition-all duration-300 hover:bg-white/10 hover:border-white/20">
                         <img id="navAvatar" src=""
-                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg object-cover border border-white/20">
+                            class="w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-lg object-cover border border-white/20">
                         <span id="navUsername"
-                            class="text-[9px] sm:text-[11px] tracking-[0.2em] font-bold uppercase opacity-90 truncate max-w-[80px] sm:max-w-[120px]"></span>
+                            class="text-[10px] sm:text-[11px] tracking-[0.2em] font-bold uppercase opacity-90 truncate max-w-[90px] sm:max-w-[130px]"></span>
                     </div>
                     <button id="logoutBtn"
-                        class="logout-btn p-2 sm:p-3 bg-red-500/10 border border-red-500/20 rounded-full text-red-500 hover:bg-red-500/20 hover:text-red-400 transition-all">
+                        class="logout-btn p-2.5 sm:p-3 bg-red-500/10 border border-red-500/20 rounded-full text-red-500 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/40 transition-all duration-300 hover:-translate-y-0.5 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_25px_rgba(239,68,68,0.2)]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -66,24 +69,24 @@
             </div>
         </nav>
     </header>
-    <main class="relative z-20">
+    <main class="relative z-20 flex-grow">
         <section id="home"
             class="min-h-[85vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 relative">
             <div
-                class="absolute w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[100px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                class="absolute w-[800px] h-[800px] bg-white/[0.015] rounded-full blur-[120px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
             </div>
             <h2
-                class="font-[Cinzel] text-6xl sm:text-8xl md:text-[140px] font-black tracking-tighter leading-[0.9] animate-heroFade drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">
+                class="font-[Cinzel] text-7xl sm:text-8xl md:text-[160px] font-black tracking-tighter leading-[0.85] animate-heroFade drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/10 relative z-10">
                 THINK.<br><span
-                    class="opacity-10 bg-gradient-to-r from-white/20 to-transparent bg-clip-text break-words">DISCOURSE.</span>
+                    class="opacity-10 bg-gradient-to-r from-white/30 via-white/10 to-transparent bg-clip-text break-words blur-[1px]">DISCOURSE.</span>
             </h2>
-            <div class="mt-12 sm:mt-20 z-10">
+            <div class="mt-16 sm:mt-24 z-10">
                 <a href="#suggestions"
-                    class="action-btn px-10 sm:px-14 py-4 sm:py-5 bg-white text-black font-black text-[10px] sm:text-[12px] tracking-[0.4em] sm:tracking-[0.5em] rounded-full transition-all duration-500 uppercase flex items-center gap-4 group">
+                    class="action-btn px-12 sm:px-16 py-4 sm:py-5 bg-white text-black font-black text-[11px] sm:text-[13px] tracking-[0.5em] rounded-full transition-all duration-500 uppercase flex items-center gap-5 group hover:bg-gray-100">
                     PROPOSE IDEA
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="transform group-hover:translate-x-2 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="transform group-hover:translate-x-3 transition-transform duration-500">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
@@ -92,98 +95,100 @@
         </section>
         <section id="suggestions" class="py-24 sm:py-40 relative">
             <div
-                class="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-black pointer-events-none">
+                class="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-black pointer-events-none">
             </div>
             <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-                <div class="text-center mb-16 sm:mb-28">
+                <div class="text-center mb-20 sm:mb-32">
                     <h3
-                        class="font-[Cinzel] text-4xl sm:text-6xl tracking-[0.3em] sm:tracking-[0.4em] mb-4 font-black drop-shadow-2xl">
+                        class="font-[Cinzel] text-5xl sm:text-7xl tracking-[0.3em] sm:tracking-[0.4em] mb-6 font-black drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50">
                         SUGGESTIONS</h3>
-                    <p class="text-[10px] sm:text-[12px] tracking-[0.5em] sm:tracking-[0.7em] opacity-30 font-semibold">
+                    <p
+                        class="text-[10px] sm:text-[12px] tracking-[0.6em] sm:tracking-[0.8em] opacity-40 font-semibold uppercase">
                         COMMUNITY DRIVEN EVOLUTION</p>
                 </div>
-                <div class="relative group mb-16 sm:mb-24 max-w-4xl mx-auto">
+                <div class="relative group mb-20 sm:mb-32 max-w-4xl mx-auto">
                     <div
-                        class="absolute -inset-1 bg-gradient-to-r from-white/0 via-white/20 to-white/0 rounded-[30px] sm:rounded-[40px] blur-xl opacity-20 group-focus-within:opacity-50 transition duration-700">
+                        class="absolute -inset-1.5 bg-gradient-to-r from-white/0 via-white/10 to-white/0 rounded-[30px] sm:rounded-[40px] blur-2xl opacity-20 group-focus-within:opacity-60 transition duration-700">
                     </div>
                     <div
-                        class="relative bg-black/80 border border-white/10 rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 backdrop-blur-3xl transition-all focus-within:border-white/40 focus-within:shadow-[0_0_60px_rgba(255,255,255,0.05)]">
+                        class="relative bg-[#050505]/90 border border-white/10 rounded-[30px] sm:rounded-[40px] p-8 sm:p-12 backdrop-blur-3xl transition-all duration-500 focus-within:border-white/30 focus-within:shadow-[0_0_80px_rgba(255,255,255,0.08)]">
                         <textarea id="suggestionInput"
-                            class="w-full bg-transparent border-none outline-none text-lg sm:text-2xl placeholder:text-white/20 resize-none min-h-[120px] sm:min-h-[160px] font-light leading-relaxed tracking-wide custom-scrollbar"
+                            class="w-full bg-transparent border-none outline-none text-xl sm:text-2xl placeholder:text-white/20 resize-none min-h-[140px] sm:min-h-[180px] font-light leading-relaxed tracking-wide custom-scrollbar text-white/90"
                             placeholder="Shape the future of ATLAS..."></textarea>
                         <div
-                            class="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/10 gap-6">
-                            <div class="flex items-center gap-3 opacity-40">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                            class="flex flex-col sm:flex-row items-center justify-between mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-white/10 gap-6">
+                            <div
+                                class="flex items-center gap-4 opacity-40 transition-opacity duration-300 group-focus-within:opacity-70">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                 </svg>
-                                <p class="text-[9px] sm:text-[10px] tracking-widest font-bold uppercase">Requires
+                                <p class="text-[9px] sm:text-[11px] tracking-widest font-bold uppercase">Requires
                                     Discord Authorization</p>
                             </div>
                             <button id="submitSuggestion"
-                                class="px-8 sm:px-12 py-4 sm:py-5 bg-white text-black text-[10px] sm:text-[11px] font-black tracking-[0.3em] sm:tracking-[0.4em] rounded-full hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:scale-[1.02] transition-all w-full sm:w-auto uppercase disabled:opacity-50">SUBMIT</button>
+                                class="px-10 sm:px-14 py-4 sm:py-5 bg-white text-black text-[10px] sm:text-[12px] font-black tracking-[0.4em] rounded-full hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] hover:scale-[1.03] transition-all duration-500 w-full sm:w-auto uppercase disabled:opacity-30 disabled:hover:scale-100 disabled:hover:shadow-none disabled:cursor-not-allowed">SUBMIT</button>
                         </div>
                     </div>
                 </div>
-                <div id="suggestionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10"></div>
+                <div id="suggestionsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12"></div>
             </div>
         </section>
     </main>
     <footer
-        class="relative z-20 border-t border-white/10 bg-black py-16 sm:py-24 flex flex-col items-center gap-8 sm:gap-12">
+        class="relative z-20 border-t border-white/5 bg-[#020202] py-16 sm:py-24 flex flex-col items-center gap-10 sm:gap-14">
         <a href="https://instagram.com/lilzeng1" target="_blank"
-            class="group flex flex-col items-center gap-4 transition-all duration-500 hover:-translate-y-2">
+            class="group flex flex-col items-center gap-5 transition-all duration-500 hover:-translate-y-3">
             <div
-                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border border-white/10 flex items-center justify-center group-hover:border-white/50 transition-all bg-white/5 backdrop-blur-xl shadow-2xl group-hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]">
+                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border border-white/10 flex items-center justify-center group-hover:border-white/40 transition-all duration-500 bg-white/5 backdrop-blur-xl shadow-2xl group-hover:shadow-[0_0_50px_rgba(255,255,255,0.15)] group-hover:bg-white/10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                    class="opacity-70 group-hover:opacity-100 transition-opacity">
+                    class="opacity-60 group-hover:opacity-100 transition-opacity duration-500">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                 </svg>
             </div>
             <span
-                class="text-[9px] sm:text-[11px] tracking-[0.5em] sm:tracking-[0.8em] opacity-30 group-hover:opacity-100 font-bold drop-shadow-lg transition-opacity">@LILZENG1</span>
+                class="text-[10px] sm:text-[12px] tracking-[0.6em] sm:tracking-[0.8em] opacity-30 group-hover:opacity-100 font-bold drop-shadow-lg transition-opacity duration-500">@LILZENG1</span>
         </a>
         <p
-            class="text-[8px] sm:text-[10px] tracking-[0.4em] sm:tracking-[0.6em] opacity-20 uppercase font-mono text-center px-4">
+            class="text-[9px] sm:text-[10px] tracking-[0.5em] sm:tracking-[0.7em] opacity-20 uppercase font-mono text-center px-4">
             © 2026 ATLAS — ALL RIGHTS RESERVED</p>
     </footer>
     <div id="customPopup"
         class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-all duration-500 p-4">
-        <div class="absolute inset-0 bg-black/95 backdrop-blur-3xl"></div>
-        <div class="relative bg-[#050505] border border-white/10 p-8 sm:p-12 rounded-[30px] shadow-[0_0_80px_rgba(255,255,255,0.05)] max-w-md w-full transform scale-90 transition-all duration-500"
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-3xl"></div>
+        <div class="relative bg-[#080808] border border-white/10 p-10 sm:p-14 rounded-[40px] shadow-[0_0_100px_rgba(255,255,255,0.05)] max-w-lg w-full transform scale-90 transition-all duration-500"
             id="popupContent">
-            <h4 class="font-[Cinzel] text-2xl sm:text-4xl font-black mb-4 text-white tracking-[0.2em] drop-shadow-xl"
+            <h4 class="font-[Cinzel] text-3xl sm:text-4xl font-black mb-5 text-white tracking-[0.2em] drop-shadow-xl"
                 id="popupTitle">Notice</h4>
-            <p class="text-white/50 text-sm sm:text-base mb-10 font-light leading-relaxed tracking-wide"
+            <p class="text-white/60 text-sm sm:text-base mb-12 font-light leading-relaxed tracking-wide"
                 id="popupMessage">Message</p>
             <button id="closePopupBtn"
-                class="w-full py-4 sm:py-5 bg-white text-black font-black text-[10px] sm:text-[12px] tracking-[0.3em] sm:tracking-[0.5em] rounded-full hover:bg-gray-200 transition-all uppercase shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-[1.02]">ACKNOWLEDGE</button>
+                class="w-full py-4 sm:py-5 bg-white text-black font-black text-[11px] sm:text-[13px] tracking-[0.4em] rounded-full hover:bg-gray-200 transition-all duration-300 uppercase shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:scale-[1.03]">ACKNOWLEDGE</button>
         </div>
     </div>
     <script src="./Scripts/Home.js"></script>
     <script>
         async function updateUI() {
-    const token = new URLSearchParams(window.location.search).get('token') || localStorage.getItem('atlas_token');
-    if (token) {
-        localStorage.setItem('atlas_token', token);
-        const res = await fetch(`${BACKEND_URL}/api/user`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.logged) {
-            // ... (diğer avatar/username kodları)
-            if (data.isStaff) {
-                document.getElementById('navDashboard').classList.remove('hidden');
+            const token = new URLSearchParams(window.location.search).get('token') || localStorage.getItem('atlas_token');
+            if (token) {
+                localStorage.setItem('atlas_token', token);
+                try {
+                    const res = await fetch(`/api/user`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (data.logged && data.isStaff) {
+                        document.getElementById('navDashboard').classList.remove('hidden');
+                    }
+                } catch (e) { }
             }
         }
-    }
-}
+        updateUI();
     </script>
 </body>
 </html>
