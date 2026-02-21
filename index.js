@@ -12,9 +12,10 @@ const __dirname = path.dirname(__filename)
 const app = express()
 
 mongoose.connect(process.env.MONGO_URI || "mongodb+srv://lilzeng1admin:George11Nasa@atlas.sujnqrt.mongodb.net/Atlas?retryWrites=true&w=majority&appName=Atlas", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => { }).catch(e => { })
+    dbName: "Atlas",
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000
+}).then(() => { }).catch(() => { })
 
 const suggestionSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
@@ -23,7 +24,7 @@ const suggestionSchema = new mongoose.Schema({
     likes: [String],
     dislikes: [String],
     timestamp: Date
-})
+}, { collection: "suggestions" })
 
 const Suggestion = mongoose.model("Suggestion", suggestionSchema)
 
@@ -41,7 +42,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, BASE_URL, GUILD_ID, WEBHOOK_URL } = process.env
-const SUGGESTION_CHANNEL_ID = "1474169182852743230"
 const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
 const sessions = new Map()
 const authStates = new Map()
@@ -70,12 +70,9 @@ async function getMemberData(userId) {
 app.get("/api/user", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ logged: false })
-
     const session = sessions.get(token)
     const member = await getMemberData(session.user.id)
-
     const isStaff = member ? member.roles.some(r => ALLOWED_ROLES.includes(r)) : false
-
     res.json({
         logged: true,
         user: session.user,
@@ -97,7 +94,6 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
     const returnTo = authStates.get(state) || "https://lilzeng1.github.io/Atlas/"
     if (state) authStates.delete(state)
     if (!code) return res.redirect(returnTo)
-
     try {
         const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
             method: "POST",
@@ -116,12 +112,10 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
         })
         const userData = await userRes.json()
         const sessionToken = crypto.randomBytes(32).toString("hex")
-
         sessions.set(sessionToken, {
             user: { id: userData.id, username: userData.username, avatar: userData.avatar },
             createdAt: Date.now()
         })
-
         const sep = returnTo.includes("?") ? "&" : "?"
         res.redirect(`${returnTo}${sep}token=${sessionToken}`)
     } catch {
@@ -132,15 +126,12 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
 app.get("/api/guild/search", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
-
     const member = await getMemberData(sessions.get(token).user.id)
     if (!member || !member.roles.some(r => ALLOWED_ROLES.includes(r))) {
         return res.status(403).json({ error: "Forbidden" })
     }
-
     const q = req.query.q
     if (!q) return res.json([])
-
     try {
         const resp = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/search?query=${q}&limit=20`, {
             headers: { Authorization: `Bot ${BOT_TOKEN}` }
@@ -155,19 +146,15 @@ app.get("/api/guild/search", async (req, res) => {
 app.post("/api/guild/action", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
-
     const executor = await getMemberData(sessions.get(token).user.id)
     if (!executor || !executor.roles.some(r => ALLOWED_ROLES.includes(r))) {
         return res.status(403).json({ error: "Forbidden" })
     }
-
     const { targetId, action } = req.body
     let url = `https://discord.com/api/v10/guilds/${GUILD_ID}`
     let method = action === "kick" ? "DELETE" : (action === "ban" ? "PUT" : "")
-
     if (!method) return res.status(400).json({ error: "Invalid action" })
     url += action === "kick" ? `/members/${targetId}` : `/bans/${targetId}`
-
     try {
         const resp = await fetch(url, { method, headers: { Authorization: `Bot ${BOT_TOKEN}` } })
         if (resp.ok || resp.status === 204) res.json({ success: true })
@@ -189,11 +176,9 @@ app.get("/api/suggestions", async (req, res) => {
 app.post("/api/suggestions", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
-
     const session = sessions.get(token)
     const { text } = req.body
     if (!text || text.trim().length < 5) return res.status(400).json({ error: "Invalid text" })
-
     try {
         const newSuggestion = new Suggestion({
             id: crypto.randomBytes(16).toString("hex"),
@@ -203,14 +188,11 @@ app.post("/api/suggestions", async (req, res) => {
             dislikes: [],
             timestamp: new Date()
         })
-
         await newSuggestion.save()
-
         if (WEBHOOK_URL) {
             const avatarUrl = session.user.avatar
                 ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png`
                 : `https://cdn.discordapp.com/embed/avatars/0.png`
-
             await fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -230,7 +212,6 @@ app.post("/api/suggestions", async (req, res) => {
                 })
             }).catch(() => { })
         }
-
         res.json({ success: true })
     } catch {
         res.status(500).json({ error: "Server error" })
@@ -240,21 +221,16 @@ app.post("/api/suggestions", async (req, res) => {
 app.post("/api/suggestions/react", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
-
     const session = sessions.get(token)
     const { id, type } = req.body
-
     try {
         const suggestion = await Suggestion.findOne({ id })
         if (!suggestion) return res.status(404).json({ error: "Not found" })
-
         const userId = session.user.id
         suggestion.likes = suggestion.likes.filter(uid => uid !== userId)
         suggestion.dislikes = suggestion.dislikes.filter(uid => uid !== userId)
-
         if (type === "like") suggestion.likes.push(userId)
         if (type === "dislike") suggestion.dislikes.push(userId)
-
         await suggestion.save()
         res.json({ success: true })
     } catch {
