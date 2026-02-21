@@ -14,19 +14,24 @@ const closePopupBtn = document.getElementById('closePopupBtn')
 let user = null
 const urlParams = new URLSearchParams(window.location.search)
 const urlToken = urlParams.get('token')
+
 if (urlToken) {
     localStorage.setItem('atlas_token', urlToken)
     window.history.replaceState({}, document.title, window.location.pathname)
 }
+
 const getToken = () => localStorage.getItem('atlas_token')
+
 function showPopup(title, message) {
     popupTitle.innerText = title
     popupMessage.innerText = message
     customPopup.classList.add('popup-visible')
 }
+
 closePopupBtn.onclick = () => {
     customPopup.classList.remove('popup-visible')
 }
+
 async function checkAuth() {
     const token = getToken()
     if (!token) return setupLogin()
@@ -56,6 +61,7 @@ async function checkAuth() {
         setupLogin()
     }
 }
+
 function setupLogin() {
     localStorage.removeItem('atlas_token')
     loginBtn.classList.remove('hidden')
@@ -65,6 +71,7 @@ function setupLogin() {
         window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`
     }
 }
+
 async function loadSuggestions() {
     try {
         const res = await fetch(`${BACKEND_URL}/api/suggestions`)
@@ -76,36 +83,38 @@ async function loadSuggestions() {
         list.forEach(s => renderCard(s))
     } catch (e) { }
 }
+
 function renderCard(data) {
     const avatar = data.user.avatar
         ? `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/0.png`
     const card = document.createElement('div')
-    card.className = 'suggestion-card flex flex-col gap-6'
+    card.className = 'suggestion-card flex flex-col gap-4 sm:gap-6 break-words'
     const isLiked = user && data.likes.includes(user.id)
     const isDisliked = user && data.dislikes.includes(user.id)
     card.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10 shadow-lg object-cover">
-                <span class="text-[11px] font-bold tracking-[0.2em] opacity-90 uppercase">${data.user.username}</span>
+        <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
+                <img src="${avatar}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/10 shadow-lg object-cover flex-shrink-0">
+                <span class="text-[9px] sm:text-[11px] font-bold tracking-[0.1em] sm:tracking-[0.2em] opacity-90 uppercase truncate">${data.user.username}</span>
             </div>
-            <span class="text-[9px] opacity-20 font-mono">${new Date(data.timestamp || Date.now()).toLocaleDateString()}</span>
+            <span class="text-[7px] sm:text-[9px] opacity-20 font-mono whitespace-nowrap">${new Date(data.timestamp || Date.now()).toLocaleDateString()}</span>
         </div>
-        <p class="text-white/80 font-light leading-relaxed text-lg italic">"${data.text}"</p>
-        <div class="flex items-center gap-3 mt-auto">
+        <p class="text-white/80 font-light leading-relaxed text-sm sm:text-lg italic break-words w-full">"${data.text}"</p>
+        <div class="flex items-center gap-2 sm:gap-3 mt-auto pt-2">
             <button class="vote-btn ${isLiked ? 'active-like' : ''}" onclick="vote('${data.id}', 'like')">
-                <span class="text-sm">👍</span>
-                <span class="text-[10px] font-bold">${data.likes.length}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-5 sm:h-5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                <span class="text-[9px] sm:text-[10px] font-bold">${data.likes.length}</span>
             </button>
             <button class="vote-btn ${isDisliked ? 'active-dislike' : ''}" onclick="vote('${data.id}', 'dislike')">
-                <span class="text-sm">👎</span>
-                <span class="text-[10px] font-bold">${data.dislikes.length}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-5 sm:h-5"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2"></path></svg>
+                <span class="text-[9px] sm:text-[10px] font-bold">${data.dislikes.length}</span>
             </button>
         </div>
     `
     suggestionsContainer.appendChild(card)
 }
+
 async function vote(id, type) {
     if (!user) return showPopup('Action Required', 'You must log in to Discord to interact with suggestions!')
     const token = getToken()
@@ -123,6 +132,7 @@ async function vote(id, type) {
         showPopup('Error', 'Connection to server failed.')
     }
 }
+
 submitSuggestion.onclick = async () => {
     if (!user) return showPopup('Unauthorized', 'Please log in to Discord to submit an idea.')
     const text = suggestionInput.value.trim()
@@ -159,18 +169,8 @@ class Vote {
         this.id = id
         this.type = type
     }
-
-    // Async
     async send() {
-        // ShowPopUp()
         if (!user) return showPopup("Error Detected", "You must be logged in to vote on suggestions.")
-
-        if (this.type === "like") {
-            like++;
-        } else if (this.type === "dislike") {
-            dislike++;
-        }
-
         try {
             const token = getToken();
             const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
