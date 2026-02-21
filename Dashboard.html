@@ -3,82 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATLAS — Command Dashboard</title>
+    <title>ATLAS — Nexus Command</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Inter:wght@300;400;600;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="./Styles/Home.css">
     <link rel="stylesheet" href="./Styles/Dashboard.css">
 </head>
-<body class="bg-[#020202] text-white font-[Inter] overflow-x-hidden selection:bg-red-600">
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.05),transparent)]"></div>
-        <div
-            class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10">
-        </div>
+<body class="bg-black text-white font-[Inter] overflow-x-hidden selection:bg-red-500 selection:text-white">
+    <div class="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-500/[0.05] to-transparent mix-blend-overlay"></div>
+        <img src="Assets/Server/ServerIcon.webp"
+            class="w-[400px] md:w-[800px] opacity-[0.03] blur-[60px] animate-spaceFloat">
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black"></div>
     </div>
 
-    <header class="relative z-50 border-b border-white/5 backdrop-blur-2xl bg-black/80 sticky top-0">
-        <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <header
+        class="relative z-50 border-b border-white/5 backdrop-blur-3xl bg-black/50 sticky top-0 transition-all duration-300">
+        <nav class="max-w-7xl mx-auto px-6 h-20 sm:h-24 flex items-center justify-between">
             <div class="flex items-center gap-4 cursor-pointer group" onclick="window.location.href='index.html'">
-                <div class="relative">
-                    <div
-                        class="absolute -inset-2 bg-red-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-all">
-                    </div>
-                    <img src="Assets/Server/ServerIcon.webp"
-                        class="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-white/10 shadow-2xl"
-                        onerror="this.style.display='none'">
-                </div>
-                <div class="flex flex-col leading-none">
-                    <span class="font-[Cinzel] text-xl sm:text-2xl tracking-[0.2em] font-black text-white">ATLAS</span>
-                    <span class="text-[8px] tracking-[0.4em] text-red-500 font-bold uppercase">Command Center</span>
+                <img src="Assets/Server/ServerIcon.webp"
+                    class="w-10 h-10 sm:w-12 sm:h-12 grayscale brightness-150 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_40px_rgba(220,38,38,0.2)] transition-all">
+                <div class="flex flex-col">
+                    <span class="font-[Cinzel] text-xl sm:text-2xl tracking-[0.3em] font-black text-white">ATLAS</span>
+                    <span class="text-[8px] tracking-[0.4em] text-red-500/60 font-bold uppercase">Nexus Control</span>
                 </div>
             </div>
             <a href="index.html"
-                class="text-[10px] tracking-[0.2em] font-bold uppercase border border-white/10 px-5 py-2 rounded-full hover:bg-white hover:text-black transition-all">Exit</a>
+                class="px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] tracking-[0.3em] font-black hover:bg-white hover:text-black transition-all uppercase">Return</a>
         </nav>
     </header>
 
-    <main class="relative z-20 min-h-screen py-10 sm:py-20" id="mainContent" style="display: none;">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="mb-12 text-center sm:text-left">
-                <h1 class="font-[Cinzel] text-3xl sm:text-5xl tracking-tighter font-black mb-2 italic">OVERRIDE_PANEL
-                </h1>
-                <div class="h-1 w-20 bg-red-600 mx-auto sm:mx-0"></div>
+    <main class="relative z-20 opacity-0 transition-opacity duration-1000" id="mainContent">
+        <section class="max-w-5xl mx-auto px-6 py-12 sm:py-24">
+            <div class="text-center mb-16 animate-heroFade">
+                <h1
+                    class="font-[Cinzel] text-5xl sm:text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 italic">
+                    OVERRIDE.</h1>
+                <p class="text-[10px] sm:text-[12px] tracking-[0.6em] text-red-500 font-bold uppercase opacity-50">
+                    Authorized Personnel Only</p>
             </div>
 
-            <div class="relative mb-10">
-                <div class="absolute -inset-4 bg-red-600/5 rounded-[40px] blur-2xl"></div>
+            <div class="relative group mb-12 max-w-2xl mx-auto">
                 <div
-                    class="relative bg-white/[0.03] border border-white/10 rounded-2xl p-2 sm:p-4 backdrop-blur-3xl flex flex-col sm:flex-row gap-3">
+                    class="absolute -inset-1 bg-gradient-to-r from-red-500/0 via-red-500/20 to-red-500/0 rounded-2xl blur-xl opacity-20 group-focus-within:opacity-50 transition duration-700">
+                </div>
+                <div
+                    class="relative bg-black/80 border border-white/10 rounded-2xl p-2 flex flex-col sm:flex-row gap-2 backdrop-blur-3xl transition-all focus-within:border-red-500/40">
                     <input type="text" id="searchInput"
-                        class="flex-1 bg-transparent border-none outline-none px-4 py-3 text-sm font-medium tracking-widest placeholder:text-white/20"
-                        placeholder="SEARCH BY USERNAME...">
+                        class="flex-1 bg-transparent border-none outline-none px-6 py-4 text-sm font-medium tracking-widest placeholder:text-white/10"
+                        placeholder="IDENTIFY SUBJECT BY USERNAME...">
                     <button id="searchBtn"
-                        class="w-full sm:w-auto px-10 py-3 bg-red-600 text-white text-[11px] font-black tracking-widest rounded-xl hover:bg-red-500 transition-all uppercase shadow-lg shadow-red-900/20">Execute
-                        Search</button>
+                        class="px-8 py-4 bg-white text-black text-[11px] font-black tracking-widest rounded-xl hover:bg-red-600 hover:text-white transition-all uppercase">EXECUTE</button>
                 </div>
             </div>
 
-            <div id="resultsContainer" class="grid grid-cols-1 gap-3"></div>
-        </div>
+            <div id="resultsContainer" class="grid grid-cols-1 gap-4 animate-heroFade" style="animation-delay: 0.2s;">
+            </div>
+        </section>
     </main>
 
-    <div id="loader" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black">
-        <div class="w-12 h-12 border-2 border-red-600/20 border-t-red-600 rounded-full animate-spin mb-4"></div>
-        <div class="text-[10px] tracking-[0.5em] font-bold text-white/40 uppercase">Establishing Secure Link...</div>
+    <div id="loader"
+        class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black transition-all duration-700">
+        <div
+            class="w-16 h-16 border-2 border-red-600/10 border-t-red-600 rounded-full animate-spin mb-6 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
+        </div>
+        <div class="text-[10px] tracking-[0.8em] font-black text-white/20 uppercase animate-pulse">Establishing Secure
+            Neural Link</div>
     </div>
 
     <div id="customPopup"
-        class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300 p-4">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-        <div class="relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl max-w-sm w-full transform scale-95 transition-all"
+        class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-all duration-500 p-4">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-3xl"></div>
+        <div class="relative bg-[#050505] border border-white/10 p-8 sm:p-12 rounded-[40px] shadow-[0_0_80px_rgba(255,0,0,0.05)] max-w-md w-full transform scale-90 transition-all duration-500"
             id="popupContent">
-            <h4 class="font-[Cinzel] text-xl font-black mb-3 tracking-widest text-red-500" id="popupTitle">Notification
-            </h4>
-            <p class="text-white/60 text-sm mb-8 leading-relaxed" id="popupMessage"></p>
+            <h4 class="font-[Cinzel] text-2xl font-black mb-4 text-red-600 tracking-[0.2em]" id="popupTitle">NOTICE</h4>
+            <p class="text-white/50 text-sm mb-10 font-light leading-relaxed tracking-wide" id="popupMessage"></p>
             <button id="closePopupBtn"
-                class="w-full py-4 bg-white text-black font-black text-[10px] tracking-widest rounded-xl hover:bg-red-600 hover:text-white transition-all uppercase">Acknowledge</button>
+                class="w-full py-5 bg-white text-black font-black text-[10px] tracking-[0.5em] rounded-full hover:bg-red-600 hover:text-white transition-all uppercase">ACKNOWLEDGE</button>
         </div>
     </div>
 
