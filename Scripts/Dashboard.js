@@ -17,9 +17,7 @@ function showPopup(title, message) {
     customPopup.classList.add('popup-visible')
 }
 
-closePopupBtn.onclick = () => {
-    customPopup.classList.remove('popup-visible')
-}
+closePopupBtn.onclick = () => customPopup.classList.remove('popup-visible')
 
 async function checkAuth() {
     const token = getToken()
@@ -28,7 +26,6 @@ async function checkAuth() {
         const res = await fetch(`${BACKEND_URL}/api/user`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
-        if (!res.ok) throw new Error()
         const data = await res.json()
         if (data.logged && data.isStaff) {
             loader.style.display = 'none'
@@ -45,76 +42,69 @@ async function searchMembers() {
     const q = searchInput.value.trim()
     if (!q) return
     const token = getToken()
-    searchBtn.innerText = "..."
     searchBtn.disabled = true
+    searchBtn.innerText = "QUERYING..."
+
     try {
         const res = await fetch(`${BACKEND_URL}/api/guild/search?q=${encodeURIComponent(q)}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         const data = await res.json()
         resultsContainer.innerHTML = ''
-        if (data.error) throw new Error(data.error)
+
+        if (data.error) throw new Error()
         if (data.length === 0) {
-            resultsContainer.innerHTML = '<p class="text-center opacity-30 tracking-widest text-xs py-10 uppercase font-mono">No target found</p>'
+            resultsContainer.innerHTML = '<div class="py-20 text-center opacity-20 text-[10px] tracking-[0.5em]">ZERO_RESULTS_FOUND</div>'
             return
         }
+
         data.forEach(m => {
-            if (!m.user) return
-            const avatar = m.user.avatar
-                ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png`
-                : `https://cdn.discordapp.com/embed/avatars/0.png`
-            const card = document.createElement('div')
-            card.className = 'member-card'
-            card.innerHTML = `
-                <div class="flex items-center gap-4">
-                    <img src="${avatar}" class="w-10 h-10 rounded-full border border-white/10 shadow-lg">
+            const avatar = m.user.avatar ? `https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/0.png`
+            const div = document.createElement('div')
+            div.className = 'member-card'
+            div.innerHTML = `
+                <div class="flex items-center gap-4 flex-1">
+                    <img src="${avatar}" class="w-10 h-10 rounded-lg border border-white/10 shadow-xl">
                     <div class="flex flex-col">
-                        <span class="font-bold tracking-wider text-sm">${m.user.username}</span>
-                        <span class="text-[9px] opacity-40 font-mono tracking-widest">ID: ${m.user.id}</span>
+                        <span class="text-sm font-bold tracking-tight">${m.user.username}</span>
+                        <span class="text-[9px] font-mono opacity-30">${m.user.id}</span>
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <button class="action-btn-danger kick" onclick="executeAction('${m.user.id}', 'kick', '${m.user.username}')">KICK</button>
-                    <button class="action-btn-danger ban" onclick="executeAction('${m.user.id}', 'ban', '${m.user.username}')">BAN</button>
+                <div class="action-group">
+                    <button class="btn-act btn-kick" onclick="executeAction('${m.user.id}', 'kick', '${m.user.username}')">Kick</button>
+                    <button class="btn-act btn-ban" onclick="executeAction('${m.user.id}', 'ban', '${m.user.username}')">Ban</button>
                 </div>
             `
-            resultsContainer.appendChild(card)
+            resultsContainer.appendChild(div)
         })
-    } catch (e) {
-        showPopup('Search Error', 'Failed to retrieve database records.')
+    } catch {
+        showPopup('System Error', 'Database connection interrupted.')
     } finally {
-        searchBtn.innerText = "SEARCH"
         searchBtn.disabled = false
+        searchBtn.innerText = "Execute Search"
     }
 }
 
 async function executeAction(targetId, action, username) {
-    const confirmAction = confirm(`WARNING: Are you sure you want to ${action.toUpperCase()} ${username}?`)
-    if (!confirmAction) return
+    if (!confirm(`Confirm Protocol: ${action.toUpperCase()} user ${username}?`)) return
     const token = getToken()
     try {
         const res = await fetch(`${BACKEND_URL}/api/guild/action`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ targetId, action })
         })
         if (res.ok) {
-            showPopup('Command Executed', `Target ${username} has been ${action}ned from ATLAS.`)
+            showPopup('Success', `Operation completed: ${username} has been ${action}ed.`)
             searchMembers()
         } else {
-            showPopup('Execution Failed', 'Insufficient permissions or hierarchy block.')
+            showPopup('Denied', 'Hierarchy block or insufficient clearance.')
         }
     } catch {
-        showPopup('System Error', 'Cannot reach command center.')
+        showPopup('Error', 'Command signal lost.')
     }
 }
 
 searchBtn.onclick = searchMembers
-searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') searchMembers()
-})
-
+searchInput.onkeypress = (e) => e.key === 'Enter' && searchMembers()
 checkAuth()
