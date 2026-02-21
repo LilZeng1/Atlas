@@ -1,0 +1,106 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    word-wrap: break-word;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 0, 0, 0.5);
+}
+
+@keyframes spaceFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.02;
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.05);
+        opacity: 0.05;
+    }
+}
+
+.animate-spaceFloat {
+    animation: spaceFloat 15s ease-in-out infinite;
+}
+
+.member-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+}
+
+.member-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+.action-btn-danger {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-btn-danger.kick:hover {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border-color: #f59e0b;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+.action-btn-danger.ban:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    border-color: #dc2626;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+}
+
+.popup-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.popup-visible #popupContent {
+    transform: scale(1) translateY(0) !important;
+}
+
+#popupContent {
+    transform: scale(0.9) translateY(40px);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
