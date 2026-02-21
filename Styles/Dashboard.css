@@ -5,15 +5,13 @@
 }
 
 body {
-    background: #000;
+    background: #020202;
     color: #fff;
-    font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-    word-wrap: break-word;
 }
 
 ::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -21,74 +19,63 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 0, 0, 0.5);
-}
-
-@keyframes spaceFloat {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.02;
-    }
-
-    50% {
-        transform: translateY(-30px) scale(1.05);
-        opacity: 0.05;
-    }
-}
-
-.animate-spaceFloat {
-    animation: spaceFloat 15s ease-in-out infinite;
+    background: #dc2626;
 }
 
 .member-card {
-    background: rgba(255, 255, 255, 0.02);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 20px 24px;
+    border-radius: 16px;
+    padding: 16px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    transition: all 0.4s ease;
-    backdrop-filter: blur(10px);
+    gap: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .member-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateX(5px);
+    border-color: rgba(220, 38, 38, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
 }
 
-.action-btn-danger {
-    padding: 8px 20px;
-    border-radius: 100px;
-    font-size: 9px;
+.action-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .action-group {
+        width: auto;
+    }
+}
+
+.btn-act {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: all 0.3s ease;
-    background: transparent;
+    transition: all 0.2s;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.action-btn-danger.kick:hover {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+.btn-kick:hover {
     border-color: #f59e0b;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.05);
 }
 
-.action-btn-danger.ban:hover {
-    background: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
+.btn-ban:hover {
     border-color: #dc2626;
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.05);
 }
 
 .popup-visible {
@@ -97,10 +84,23 @@ body {
 }
 
 .popup-visible #popupContent {
-    transform: scale(1) translateY(0) !important;
+    transform: scale(1) !important;
 }
 
-#popupContent {
-    transform: scale(0.9) translateY(40px);
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+/* Responsive Queries */
+@media (max-width: 700px) {
+    .font-\[Cinzel\] {
+        letter-spacing: 0.1em;
+    }
+}
+
+@media (max-width: 500px) {
+    .member-card {
+        padding: 12px;
+    }
+
+    .btn-act {
+        padding: 8px 12px;
+        font-size: 9px;
+    }
 }
