@@ -21,7 +21,10 @@ closePopupBtn.onclick = () => customPopup.classList.remove('popup-visible')
 
 async function checkAuth() {
     const token = getToken()
-    if (!token) return window.location.href = 'index.html'
+    if (!token) {
+        window.location.href = 'index.html'
+        return
+    }
 
     try {
         const res = await fetch(`${BACKEND_URL}/api/user`, {
@@ -31,8 +34,8 @@ async function checkAuth() {
         if (!res.ok) throw new Error('AUTH_FAILED')
 
         const data = await res.json()
-        if (data.logged && data.isStaff) {
-            // Success: Remove loader and fade in content
+        
+        if (data && data.logged && data.isStaff) {
             loader.style.opacity = '0'
             setTimeout(() => {
                 loader.style.display = 'none'
@@ -40,10 +43,11 @@ async function checkAuth() {
                 mainContent.style.opacity = '1'
             }, 700)
         } else {
+            console.warn('Access Denied: Not logged in or not staff')
             window.location.href = 'index.html'
         }
     } catch (err) {
-        console.error('Security Breach:', err)
+        console.error('Security Breach/Auth Error:', err)
         window.location.href = 'index.html'
     }
 }
