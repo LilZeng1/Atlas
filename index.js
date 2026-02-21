@@ -180,6 +180,7 @@ app.post("/api/suggestions", async (req, res) => {
     const { text } = req.body
     if (!text || text.trim().length < 5) return res.status(400).json({ error: "Invalid text" })
     try {
+        console.log('server is starting ✅')
         const newSuggestion = new Suggestion({
             id: crypto.randomBytes(16).toString("hex"),
             text: text.trim(),
