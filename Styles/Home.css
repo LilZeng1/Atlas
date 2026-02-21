@@ -5,25 +5,26 @@
 }
 
 body {
-    background: #000;
+    background: #020202;
     color: #fff;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
     word-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
 }
 
 .custom-scrollbar::-webkit-scrollbar,
 ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #000;
+    background: #020202;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -35,23 +36,23 @@ body {
     0%,
     100% {
         transform: translateY(0) scale(1) rotate(0deg);
-        opacity: 0.03;
+        opacity: 0.04;
     }
 
     50% {
-        transform: translateY(-40px) scale(1.02) rotate(1deg);
+        transform: translateY(-50px) scale(1.03) rotate(2deg);
         opacity: 0.08;
     }
 }
 
 @keyframes heroFade {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(60px);
-        filter: blur(30px);
+        transform: translateY(80px);
+        filter: blur(40px);
     }
 
-    to {
+    100% {
         opacity: 1;
         transform: translateY(0);
         filter: blur(0);
@@ -59,7 +60,7 @@ body {
 }
 
 .animate-spaceFloat {
-    animation: spaceFloat 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: spaceFloat 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .animate-heroFade {
@@ -68,27 +69,30 @@ body {
 
 .nav-link {
     opacity: 0.5;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     text-transform: uppercase;
     position: relative;
+    padding-bottom: 4px;
 }
 
 .nav-link:hover {
     opacity: 1;
     color: #fff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
 }
 
 .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -6px;
-    left: 0;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 0%;
-    height: 1px;
+    height: 2px;
     background: #fff;
-    transition: width 0.3s ease;
-    box-shadow: 0 0 10px #fff;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 15px #fff;
+    border-radius: 2px;
 }
 
 .nav-link:hover::after {
@@ -96,21 +100,21 @@ body {
 }
 
 .action-btn {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
 }
 
 .action-btn:hover {
-    box-shadow: 0 0 60px rgba(255, 255, 255, 0.3);
-    transform: scale(1.03);
+    box-shadow: 0 0 70px rgba(255, 255, 255, 0.35);
+    transform: scale(1.04);
 }
 
 .suggestion-card {
-    background: rgba(255, 255, 255, 0.015);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 30px;
     padding: 30px;
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(30px);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -126,9 +130,10 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 50%);
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.04), transparent 60%);
     opacity: 0;
     transition: opacity 0.6s ease;
+    pointer-events: none;
 }
 
 @media (min-width: 640px) {
@@ -139,10 +144,10 @@ body {
 }
 
 .suggestion-card:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.035);
     border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-10px);
-    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.02);
+    transform: translateY(-12px);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 255, 255, 0.03);
 }
 
 .suggestion-card:hover::before {
@@ -153,32 +158,33 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 100px;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
+    font-weight: 600;
 }
 
 .vote-btn:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
 }
 
 .vote-btn.active-like {
-    background: rgba(34, 197, 94, 0.1);
+    background: rgba(34, 197, 94, 0.12);
     border-color: rgba(34, 197, 94, 0.5);
     color: #4ade80;
-    box-shadow: 0 0 30px rgba(34, 197, 94, 0.15);
+    box-shadow: 0 0 35px rgba(34, 197, 94, 0.2);
 }
 
 .vote-btn.active-dislike {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(239, 68, 68, 0.12);
     border-color: rgba(239, 68, 68, 0.5);
     color: #f87171;
-    box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.2);
 }
 
 .popup-visible {
@@ -197,12 +203,13 @@ body {
 
 textarea::placeholder {
     transition: opacity 0.4s ease;
+    color: rgba(255, 255, 255, 0.3);
 }
 
 textarea:focus::placeholder {
-    opacity: 0.02;
+    opacity: 0.05;
 }
 
 .glow-text {
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
 }
