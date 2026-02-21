@@ -20,12 +20,6 @@ function showPopup(title, message) {
 closePopupBtn.onclick = () => customPopup.classList.remove('popup-visible')
 
 async function checkAuth() {
-    const token = getToken()
-    if (!token) {
-        window.location.href = 'index.html'
-        return
-    }
-
     try {
         const res = await fetch(`${BACKEND_URL}/api/user`, {
             headers: { 'Authorization': `Bearer ${token}` }
