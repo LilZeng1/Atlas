@@ -12,8 +12,9 @@ body {
     word-wrap: break-word;
 }
 
+.custom-scrollbar::-webkit-scrollbar,
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -34,20 +35,20 @@ body {
     0%,
     100% {
         transform: translateY(0) scale(1) rotate(0deg);
-        opacity: 0.05;
+        opacity: 0.03;
     }
 
     50% {
-        transform: translateY(-30px) scale(1.05) rotate(1.5deg);
-        opacity: 0.1;
+        transform: translateY(-40px) scale(1.02) rotate(1deg);
+        opacity: 0.08;
     }
 }
 
 @keyframes heroFade {
     from {
         opacity: 0;
-        transform: translateY(50px);
-        filter: blur(25px);
+        transform: translateY(60px);
+        filter: blur(30px);
     }
 
     to {
@@ -58,75 +59,126 @@ body {
 }
 
 .animate-spaceFloat {
-    animation: spaceFloat 18s ease-in-out infinite;
+    animation: spaceFloat 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .animate-heroFade {
     animation: heroFade 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.suggestion-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 24px;
-    padding: 24px;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    backdrop-filter: blur(16px);
+.nav-link {
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.nav-link:hover {
+    opacity: 1;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0%;
+    height: 1px;
+    background: #fff;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px #fff;
+}
+
+.nav-link:hover::after {
     width: 100%;
+}
+
+.action-btn {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+.action-btn:hover {
+    box-shadow: 0 0 60px rgba(255, 255, 255, 0.3);
+    transform: scale(1.03);
+}
+
+.suggestion-card {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 30px;
+    padding: 30px;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.suggestion-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
 }
 
 @media (min-width: 640px) {
     .suggestion-card {
-        border-radius: 32px;
-        padding: 36px;
+        border-radius: 40px;
+        padding: 40px;
     }
 }
 
 .suggestion-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.9), 0 0 40px -10px rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.02);
+}
+
+.suggestion-card:hover::before {
+    opacity: 1;
 }
 
 .vote-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 12px;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 100px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
-}
-
-@media (min-width: 640px) {
-    .vote-btn {
-        gap: 8px;
-        padding: 10px 20px;
-        border-radius: 16px;
-    }
 }
 
 .vote-btn:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
 }
 
 .vote-btn.active-like {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: #22c55e;
-    color: #22c55e;
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #4ade80;
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.15);
 }
 
 .vote-btn.active-dislike {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: #ef4444;
-    color: #ef4444;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #f87171;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
 }
 
 .popup-visible {
@@ -139,8 +191,8 @@ body {
 }
 
 #popupContent {
-    transform: scale(0.9) translateY(30px);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0.9) translateY(40px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 textarea::placeholder {
@@ -148,57 +200,9 @@ textarea::placeholder {
 }
 
 textarea:focus::placeholder {
-    opacity: 0.03;
+    opacity: 0.02;
 }
 
-.premium-btn {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.03);
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
-
-.premium-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s ease;
-}
-
-.premium-btn:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-}
-
-.premium-btn:hover::before {
-    left: 100%;
-}
-
-.logout-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(239, 68, 68, 0.05);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #ef4444;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    cursor: pointer;
-}
-
-.logout-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.6);
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+.glow-text {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
 }
