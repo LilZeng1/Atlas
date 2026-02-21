@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-black text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLAS — Command Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./Styles/Dashboard.css">
+</head>
+<body class="bg-[#020202] text-white font-[Inter] overflow-x-hidden selection:bg-red-500 selection:text-white">
+    <div class="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-900/[0.03] to-transparent mix-blend-overlay"></div>
+        <img src="Assets/Server/ServerIcon.webp" class="w-[600px] opacity-[0.03] blur-[50px] animate-spaceFloat"
+            onerror="this.style.display='none'">
+    </div>
+    <header class="relative z-50 border-b border-white/5 backdrop-blur-3xl bg-black/60 sticky top-0">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-8 h-20 sm:h-24 flex items-center justify-between">
+            <div class="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
+                onclick="window.location.href='index.html'">
+                <img src="Assets/Server/ServerIcon.webp"
+                    class="w-10 h-10 sm:w-14 sm:h-14 grayscale brightness-150 rounded-xl border border-white/10"
+                    onerror="this.style.display='none'">
+                <div class="flex flex-col">
+                    <span
+                        class="font-[Cinzel] text-xl sm:text-3xl tracking-[0.3em] font-black text-red-50 drop-shadow-[0_0_15px_rgba(255,0,0,0.3)]">COMMAND</span>
+                    <span class="text-[9px] tracking-[0.6em] opacity-40 uppercase text-red-500 font-bold">Override
+                        System</span>
+                </div>
+            </div>
+            <a href="index.html"
+                class="text-[10px] tracking-[0.3em] font-bold uppercase opacity-50 hover:opacity-100 hover:text-white transition-all border border-white/10 px-6 py-2 rounded-full hover:bg-white/5">Return
+                Home</a>
+        </nav>
+    </header>
+    <main class="relative z-20 min-h-[80vh] py-16 sm:py-24" id="mainContent" style="display: none;">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-16">
+                <h1
+                    class="font-[Cinzel] text-4xl sm:text-6xl tracking-[0.2em] font-black mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">
+                    MEMBER CONTROL</h1>
+                <p class="text-[10px] sm:text-[12px] tracking-[0.5em] opacity-30 text-red-400 font-bold">AUTHORIZED
+                    PERSONNEL ONLY</p>
+            </div>
+            <div class="relative group mb-12">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-red-500/0 via-red-500/20 to-red-500/0 rounded-full blur-xl opacity-20 group-focus-within:opacity-60 transition duration-700">
+                </div>
+                <div
+                    class="relative bg-black border border-white/10 rounded-full p-2 sm:p-3 flex items-center backdrop-blur-xl focus-within:border-red-500/50 shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="ml-4 opacity-40">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput"
+                        class="w-full bg-transparent border-none outline-none px-4 text-sm sm:text-base font-medium tracking-wider placeholder:text-white/20"
+                        placeholder="ENTER DISCORD USERNAME...">
+                    <button id="searchBtn"
+                        class="px-8 py-3 sm:py-4 bg-white text-black text-[9px] sm:text-[11px] font-black tracking-[0.2em] rounded-full hover:bg-red-500 hover:text-white transition-colors uppercase">SEARCH</button>
+                </div>
+            </div>
+            <div id="resultsContainer" class="flex flex-col gap-4"></div>
+        </div>
+    </main>
+    <div id="loader" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div class="text-[12px] tracking-[1em] font-bold text-white/50 animate-pulse">VERIFYING CLEARANCE...</div>
+    </div>
+    <div id="customPopup"
+        class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-all duration-500 p-4">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-3xl"></div>
+        <div class="relative bg-[#050505] border border-red-500/20 p-8 sm:p-12 rounded-[30px] shadow-[0_0_80px_rgba(255,0,0,0.1)] max-w-md w-full transform scale-90 transition-all duration-500"
+            id="popupContent">
+            <h4 class="font-[Cinzel] text-2xl sm:text-4xl font-black mb-4 text-white tracking-[0.2em]" id="popupTitle">
+                Alert</h4>
+            <p class="text-white/50 text-sm sm:text-base mb-10 font-light leading-relaxed tracking-wide"
+                id="popupMessage">Data</p>
+            <button id="closePopupBtn"
+                class="w-full py-4 sm:py-5 bg-red-600 text-white font-black text-[10px] sm:text-[12px] tracking-[0.3em] rounded-full hover:bg-red-500 transition-all uppercase shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02]">CONFIRM</button>
+        </div>
+    </div>
+    <script src="./Scripts/Dashboard.js"></script>
+</body>
+</html>
