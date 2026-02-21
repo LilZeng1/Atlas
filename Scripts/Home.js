@@ -11,6 +11,7 @@ const customPopup = document.getElementById('customPopup')
 const popupTitle = document.getElementById('popupTitle')
 const popupMessage = document.getElementById('popupMessage')
 const closePopupBtn = document.getElementById('closePopupBtn')
+const navDashboard = document.getElementById('navDashboard')
 let user = null
 const urlParams = new URLSearchParams(window.location.search)
 const urlToken = urlParams.get('token')
@@ -46,6 +47,7 @@ async function checkAuth() {
             loginBtn.classList.add('hidden')
             userProfile.classList.remove('hidden')
             userProfile.classList.add('flex')
+            if (data.isStaff && navDashboard) navDashboard.classList.remove('hidden')
             navUsername.innerText = user.username
             navAvatar.src = user.avatar
                 ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
@@ -57,7 +59,7 @@ async function checkAuth() {
         } else {
             setupLogin()
         }
-    } catch (e) {
+    } catch {
         setupLogin()
     }
 }
@@ -67,6 +69,7 @@ function setupLogin() {
     loginBtn.classList.remove('hidden')
     userProfile.classList.add('hidden')
     userProfile.classList.remove('flex')
+    if (navDashboard) navDashboard.classList.add('hidden')
     loginBtn.onclick = () => {
         window.location.href = `${BACKEND_URL}/auth/login?returnTo=${encodeURIComponent(window.location.href)}`
     }
@@ -78,10 +81,10 @@ async function loadSuggestions() {
         const list = await res.json()
         suggestionsContainer.innerHTML = ''
         if (list.length === 0) {
-            suggestionsContainer.innerHTML = '<p class="col-span-full text-center opacity-20 py-10 tracking-[0.5em]">NO SUGGESTIONS YET</p>'
+            suggestionsContainer.innerHTML = '<p class="col-span-full text-center opacity-20 py-20 tracking-[0.6em] font-light text-sm">THE NEXUS IS EMPTY</p>'
         }
         list.forEach(s => renderCard(s))
-    } catch (e) { }
+    } catch { }
 }
 
 function renderCard(data) {
@@ -89,26 +92,26 @@ function renderCard(data) {
         ? `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/0.png`
     const card = document.createElement('div')
-    card.className = 'suggestion-card flex flex-col gap-4 sm:gap-6 break-words'
+    card.className = 'suggestion-card'
     const isLiked = user && data.likes.includes(user.id)
     const isDisliked = user && data.dislikes.includes(user.id)
     card.innerHTML = `
-        <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
-                <img src="${avatar}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/10 shadow-lg object-cover flex-shrink-0">
-                <span class="text-[9px] sm:text-[11px] font-bold tracking-[0.1em] sm:tracking-[0.2em] opacity-90 uppercase truncate">${data.user.username}</span>
+        <div class="flex items-center justify-between gap-4 z-10 relative">
+            <div class="flex items-center gap-4 overflow-hidden">
+                <img src="${avatar}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 shadow-xl object-cover flex-shrink-0">
+                <span class="text-[10px] sm:text-[12px] font-black tracking-[0.2em] opacity-90 uppercase truncate text-white glow-text">${data.user.username}</span>
             </div>
-            <span class="text-[7px] sm:text-[9px] opacity-20 font-mono whitespace-nowrap">${new Date(data.timestamp || Date.now()).toLocaleDateString()}</span>
+            <span class="text-[8px] sm:text-[10px] opacity-30 font-mono whitespace-nowrap tracking-wider">${new Date(data.timestamp || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
         </div>
-        <p class="text-white/80 font-light leading-relaxed text-sm sm:text-lg italic break-words w-full">"${data.text}"</p>
-        <div class="flex items-center gap-2 sm:gap-3 mt-auto pt-2">
+        <p class="text-white/70 font-light leading-[1.8] text-base sm:text-xl break-words w-full z-10 relative pl-2 border-l border-white/10">"${data.text}"</p>
+        <div class="flex items-center gap-3 mt-4 z-10 relative">
             <button class="vote-btn ${isLiked ? 'active-like' : ''}" onclick="vote('${data.id}', 'like')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-5 sm:h-5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-                <span class="text-[9px] sm:text-[10px] font-bold">${data.likes.length}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                <span class="text-[10px] sm:text-[11px] font-black tracking-wider">${data.likes.length}</span>
             </button>
             <button class="vote-btn ${isDisliked ? 'active-dislike' : ''}" onclick="vote('${data.id}', 'dislike')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-5 sm:h-5"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2"></path></svg>
-                <span class="text-[9px] sm:text-[10px] font-bold">${data.dislikes.length}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2"></path></svg>
+                <span class="text-[10px] sm:text-[11px] font-black tracking-wider">${data.dislikes.length}</span>
             </button>
         </div>
     `
@@ -116,7 +119,7 @@ function renderCard(data) {
 }
 
 async function vote(id, type) {
-    if (!user) return showPopup('Action Required', 'You must log in to Discord to interact with suggestions!')
+    if (!user) return showPopup('Action Required', 'Authorization is required to cast your vote.')
     const token = getToken()
     try {
         const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
@@ -128,18 +131,18 @@ async function vote(id, type) {
             body: JSON.stringify({ id, type })
         })
         if (res.ok) loadSuggestions()
-    } catch (e) {
-        showPopup('Error', 'Connection to server failed.')
+    } catch {
+        showPopup('System Error', 'Neural link disconnected.')
     }
 }
 
 submitSuggestion.onclick = async () => {
-    if (!user) return showPopup('Unauthorized', 'Please log in to Discord to submit an idea.')
+    if (!user) return showPopup('Access Denied', 'Authentication required to modify the nexus.')
     const text = suggestionInput.value.trim()
-    if (text.length < 5) return showPopup('Content Too Short', 'Please provide a more detailed suggestion.')
+    if (text.length < 5) return showPopup('Input Required', 'Provide more data for the suggestion protocol.')
     const token = getToken()
     submitSuggestion.disabled = true
-    submitSuggestion.innerText = "SENDING..."
+    submitSuggestion.innerText = "TRANSMITTING..."
     try {
         const res = await fetch(`${BACKEND_URL}/api/suggestions`, {
             method: 'POST',
@@ -152,43 +155,15 @@ submitSuggestion.onclick = async () => {
         if (res.ok) {
             suggestionInput.value = ''
             await loadSuggestions()
-            showPopup('Success', 'Your suggestion has been broadcasted to the nexus.')
+            showPopup('Success', 'Your transmission has been logged into the mainframes.')
         } else {
-            showPopup('Failed', 'Session might have expired. Please refresh.')
+            showPopup('Failed', 'Session corrupted. Re-authenticate.')
         }
-    } catch (e) {
-        showPopup('Error', 'Could not reach the server.')
+    } catch {
+        showPopup('Error', 'Host unreachable.')
     } finally {
         submitSuggestion.disabled = false
-        submitSuggestion.innerText = "SUBMIT SUGGESTION"
-    }
-}
-
-class Vote {
-    constructor(id, type) {
-        this.id = id
-        this.type = type
-    }
-    async send() {
-        if (!user) return showPopup("Error Detected", "You must be logged in to vote on suggestions.")
-        try {
-            const token = getToken();
-            const res = await fetch(`${BACKEND_URL}/api/suggestions/react`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ id: this.id, type: this.type })
-            });
-            if (res.ok) {
-                await loadSuggestions();
-            } else {
-                showPopup("Error", "Failed to send your vote. Please try again.")
-            }
-        } catch (e) {
-            showPopup("Error", "Could not connect to the server. Please check your internet connection and try again.")
-        }
+        submitSuggestion.innerText = "SUBMIT"
     }
 }
 
