@@ -237,6 +237,6 @@ app.post("/api/suggestions/react", async (req, res) => {
     } catch {
         res.status(500).json({ error: "Server error" })
     }
-})
+});
 
 app.listen(process.env.PORT || 3000)
