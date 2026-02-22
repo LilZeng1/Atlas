@@ -208,6 +208,9 @@ app.post("/api/suggestions", async (req, res) => {
                         thumbnail: {
                             url: avatarUrl
                         },
+                        footer: {
+                            text: `${suggestion.likes.length} Likes | ${suggestion.dislikes.length} Dislikes`
+                        },
                         timestamp: new Date().toISOString()
                     }]
                 })
