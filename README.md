@@ -11,7 +11,7 @@
 
 ---
 
-## >>> Overview
+## Overview
 
 **ATLAS** is a structured Discord community built around disciplined discussion.
 
