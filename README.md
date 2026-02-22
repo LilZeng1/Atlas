@@ -51,7 +51,7 @@ Severe violations = immediate permanent ban.
 ## 🌐 Links
 
 ### **Website**
-https:lilzeng1.github.io/Atlas/
+https://lilzeng1.github.io/Atlas/
 
 ### **Discord Server**
 https://discord.gg/VsHgBpQGT8
