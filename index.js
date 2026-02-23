@@ -1,3 +1,4 @@
+// Imports
 import express from "express"
 import fetch from "node-fetch"
 import dotenv from "dotenv"
@@ -5,18 +6,16 @@ import path from "path"
 import { fileURLToPath } from "url"
 import crypto from "crypto"
 import mongoose from "mongoose"
-
 dotenv.config()
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const app = express()
-
 mongoose.connect(process.env.MONGO_URI || "mongodb+srv://lilzeng1admin:George11Nasa@atlas.sujnqrt.mongodb.net/Atlas?retryWrites=true&w=majority&appName=Atlas", {
     dbName: "Atlas",
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000
 }).then(() => { }).catch(() => { })
-
 const suggestionSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     text: String,
@@ -28,8 +27,8 @@ const suggestionSchema = new mongoose.Schema({
     rejected: { type: Boolean, default: false }
 }, { collection: "suggestions" })
 
+// Suggestion Model()
 const Suggestion = mongoose.model("Suggestion", suggestionSchema)
-
 app.set("trust proxy", 1)
 app.use((req, res, next) => {
     const origin = req.headers.origin
@@ -40,16 +39,15 @@ app.use((req, res, next) => {
     if (req.method === "OPTIONS") return res.sendStatus(200)
     next()
 })
+
+// App() setup
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, BASE_URL, GUILD_ID, WEBHOOK_URL } = process.env
 const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
 const sessions = new Map()
 const authStates = new Map()
-
 const ALLOWED_USERNAMES = ["lilzeng1", "2uom", "godhimself__sdsd", "09.i", "shira.5", "yra6", "eng.joseph666"]
-
 async function getMemberData(userId) {
     try {
         const res = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${userId}`, {
@@ -82,7 +80,7 @@ app.get("/auth/login", (req, res) => {
     authStates.set(state, returnTo)
     const discordUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify%20guilds.join&state=${state}`
     res.redirect(discordUrl)
-})
+});
 
 app.get("/api/auth/discord/redirect", async (req, res) => {
     const { code, state } = req.query
@@ -116,15 +114,13 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
     } catch {
         res.redirect(returnTo)
     }
-})
+});
 
 app.get("/api/guild/search", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-    if (!ALLOWED_USERNAMES.includes(session.user.username)) {
-        return res.status(403).json({ error: "Forbidden" })
-    }
+    if (!ALLOWED_USERNAMES.includes(session.user.username)) return res.status(403).json({ error: "Forbidden" })
     const q = req.query.q
     if (!q) return res.json([])
     try {
@@ -136,15 +132,13 @@ app.get("/api/guild/search", async (req, res) => {
     } catch {
         res.status(500).json({ error: "API Error" })
     }
-})
+});
 
 app.post("/api/guild/action", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-    if (!ALLOWED_USERNAMES.includes(session.user.username)) {
-        return res.status(403).json({ error: "Forbidden" })
-    }
+    if (!ALLOWED_USERNAMES.includes(session.user.username)) return res.status(403).json({ error: "Forbidden" })
     const { targetId, action } = req.body
     let url = `https://discord.com/api/v10/guilds/${GUILD_ID}`
     let method = action === "kick" ? "DELETE" : (action === "ban" ? "PUT" : "")
@@ -157,7 +151,7 @@ app.post("/api/guild/action", async (req, res) => {
     } catch {
         res.status(500).json({ error: "Server error" })
     }
-})
+});
 
 app.get("/api/suggestions", async (req, res) => {
     try {
@@ -166,7 +160,7 @@ app.get("/api/suggestions", async (req, res) => {
     } catch {
         res.status(500).json({ error: "Database error" })
     }
-})
+});
 
 app.post("/api/suggestions", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
@@ -187,26 +181,17 @@ app.post("/api/suggestions", async (req, res) => {
         })
         await newSuggestion.save()
         if (WEBHOOK_URL) {
-            const avatarUrl = session.user.avatar
-                ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png`
-                : `https://cdn.discordapp.com/embed/avatars/0.png`
+            const avatarUrl = session.user.avatar ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/0.png`
             await fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     embeds: [{
-                        author: {
-                            name: session.user.username,
-                            icon_url: avatarUrl
-                        },
+                        author: { name: session.user.username, icon_url: avatarUrl },
                         description: text.trim(),
                         color: 0xffffff,
-                        thumbnail: {
-                            url: avatarUrl
-                        },
-                        footer: {
-                            text: `0 Likes | 0 Dislikes`
-                        },
+                        thumbnail: { url: avatarUrl },
+                        footer: { text: `0 Likes | 0 Dislikes` },
                         timestamp: new Date().toISOString()
                     }]
                 })
@@ -216,7 +201,7 @@ app.post("/api/suggestions", async (req, res) => {
     } catch {
         res.status(500).json({ error: "Server error" })
     }
-})
+});
 
 app.post("/api/suggestions/react", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
@@ -237,53 +222,35 @@ app.post("/api/suggestions/react", async (req, res) => {
     } catch {
         res.status(500).json({ error: "Server error" })
     }
-})
+});
 
-// Approval and rejection System() for Suggestions() - Only allowed for specific usernames defined in ALLOWED_USERNAMES array. This endpoint allows moderators to approve or reject suggestions, updating their status in the database and optionally sending a notification to a Discord webhook.
 app.post("/api/suggestions/moderate", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-
-    if (!ALLOWED_USERNAMES.includes(session.user.username)) {
-        return res.status(403).json({ error: "Forbidden" })
-    }
+    if (!ALLOWED_USERNAMES.includes(session.user.username)) return res.status(403).json({ error: "Forbidden" })
 
     const { id, action } = req.body
-    if (!["approve", "reject"].includes(action)) {
-        return res.status(400).json({ error: "Invalid action" })
-    }
+    if (!["approve", "reject"].includes(action)) return res.status(400).json({ error: "Invalid action" })
 
     try {
         const suggestion = await Suggestion.findOne({ id })
         if (!suggestion) return res.status(404).json({ error: "Not found" })
-        
-        if (suggestion.approved || suggestion.rejected) {
-            return res.status(400).json({ error: "Suggestion already moderated" })
-        }
-        
         suggestion.approved = action === "approve"
         suggestion.rejected = action === "reject"
-
         await suggestion.save()
         if (WEBHOOK_URL) {
-            const avatarUrl = session.user.avatar
-                ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png`
-                : `https://cdn.discordapp.com/embed/avatars/0.png`
+            const avatarUrl = session.user.avatar ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/0.png`
             await fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     embeds: [{
                         title: `Suggestion ${action === "approve" ? "Approved" : "Rejected"}`,
-                        description: `Suggestion ID: ${id}`,
+                        description: `Suggestion ID: ${id}\nContent: ${suggestion.text}`,
                         color: action === "approve" ? 0x00ff00 : 0xff0000,
-                        thumbnail: {
-                            url: avatarUrl
-                        },
-                        footer: {
-                            text: `${session.user.username} moderated this suggestion`
-                        },
+                        thumbnail: { url: avatarUrl },
+                        footer: { text: `${session.user.username} moderated this suggestion` },
                         timestamp: new Date().toISOString()
                     }]
                 })
@@ -295,7 +262,6 @@ app.post("/api/suggestions/moderate", async (req, res) => {
     }
 });
 
-// Styling Approval & Rejection System()
 app.get("/api/suggestions/styled", async (req, res) => {
     try {
         const suggestions = await Suggestion.find().sort({ timestamp: -1 })
