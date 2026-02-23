@@ -13,9 +13,7 @@
 </head>
 <body
     class="bg-[#020202] text-white font-[Inter] overflow-x-hidden selection:bg-white selection:text-black min-h-screen flex flex-col atlas-body custom-cursor-area">
-
     <div id="scrollProgress"></div>
-
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden background-wrapper">
         <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_85%)] mix-blend-screen">
@@ -27,7 +25,6 @@
         <div class="absolute inset-0 bg-gradient-to-b from-[#020202]/50 via-[#020202]/90 to-[#020202]"></div>
         <div class="noise-overlay"></div>
     </div>
-
     <header
         class="relative z-50 border-b border-white/5 backdrop-blur-3xl bg-black/40 sticky top-0 transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] custom-header"
         id="mainHeader">
@@ -50,7 +47,6 @@
                         Discourse</span>
                 </div>
             </div>
-
             <div class="hidden lg:flex items-center gap-16 text-[11px] tracking-[0.5em] font-semibold">
                 <a href="#home" class="nav-link">Home</a>
                 <a href="#metrics" class="nav-link">Metrics</a>
@@ -58,14 +54,12 @@
                 <a href="Dashboard.html" id="navDashboard"
                     class="nav-link hidden dashboard-link !text-red-400">Dashboard</a>
             </div>
-
             <div class="flex items-center gap-3 sm:gap-5" id="authContainer">
                 <button id="loginBtn"
                     class="premium-btn relative overflow-hidden px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-full bg-white/5 border border-white/10 transition-all duration-500 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
                     <span
                         class="relative z-10 text-[9px] sm:text-[11px] tracking-[0.3em] font-black uppercase text-white group-hover:text-black transition-colors duration-300">LOGIN</span>
                 </button>
-
                 <div id="userProfile" class="hidden items-center gap-2 sm:gap-4">
                     <div
                         class="profile-pill flex items-center gap-2 sm:gap-3 bg-white/5 border border-white/10 py-1.5 pl-1.5 sm:pl-2 pr-4 sm:pr-6 rounded-full backdrop-blur-xl shadow-2xl transition-all duration-300 cursor-pointer">
@@ -88,14 +82,12 @@
             </div>
         </nav>
     </header>
-
     <main class="relative z-20 flex-grow">
         <section id="home"
             class="min-h-[90vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
             <div
                 class="absolute w-[600px] h-[600px] sm:w-[1000px] sm:h-[1000px] bg-white/[0.015] rounded-full blur-[100px] sm:blur-[150px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none animate-pulseSlow">
             </div>
-
             <div class="reveal-on-scroll">
                 <h2
                     class="font-[Cinzel] text-5xl sm:text-8xl md:text-[120px] lg:text-[160px] font-black tracking-tighter leading-[0.85] animate-heroFade relative z-10 flex flex-col items-center">
@@ -110,10 +102,8 @@
                 </h2>
                 <p
                     class="mt-8 sm:mt-12 text-[10px] sm:text-[14px] lg:text-[16px] tracking-[0.4em] sm:tracking-[0.8em] font-light text-white/50 uppercase max-w-2xl mx-auto px-4">
-                    Architecting the future through collective intelligence and structured analysis.
-                </p>
+                    Architecting the future through collective intelligence and structured analysis.</p>
             </div>
-
             <div class="mt-16 sm:mt-24 lg:mt-32 z-10 animate-slideUpFade">
                 <a href="#suggestions"
                     class="action-btn relative px-8 sm:px-12 lg:px-16 py-4 sm:py-5 bg-white text-black font-black text-[10px] sm:text-[11px] lg:text-[13px] tracking-[0.4em] sm:tracking-[0.5em] rounded-full transition-all duration-500 uppercase flex items-center gap-4 sm:gap-5 group overflow-hidden">
@@ -131,14 +121,12 @@
                     </div>
                 </a>
             </div>
-
             <div
                 class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 animate-pulseSlow hidden sm:flex">
                 <span class="text-[8px] tracking-[0.4em] uppercase font-mono">Scroll</span>
                 <div class="w-px h-12 bg-gradient-to-b from-white to-transparent"></div>
             </div>
         </section>
-
         <section id="metrics" class="py-20 sm:py-32 relative z-20 border-y border-white/5 bg-black/20 backdrop-blur-sm">
             <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 reveal-on-scroll">
@@ -163,24 +151,19 @@
                 </div>
             </div>
         </section>
-
         <section id="suggestions" class="py-20 sm:py-32 lg:py-40 relative z-20">
             <div
                 class="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-[#020202] pointer-events-none">
             </div>
             <div class="max-w-screen-xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-
                 <div class="text-center mb-16 sm:mb-24 lg:mb-32 reveal-on-scroll">
                     <h3
                         class="font-[Cinzel] text-4xl sm:text-6xl lg:text-7xl tracking-[0.2em] sm:tracking-[0.4em] mb-4 sm:mb-6 font-black drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40 inline-block relative section-title">
-                        SUGGESTIONS
-                    </h3>
+                        SUGGESTIONS</h3>
                     <p
                         class="text-[9px] sm:text-[11px] lg:text-[12px] tracking-[0.4em] sm:tracking-[0.8em] opacity-50 font-semibold uppercase mt-4">
-                        COMMUNITY DRIVEN EVOLUTION
-                    </p>
+                        COMMUNITY DRIVEN EVOLUTION</p>
                 </div>
-
                 <div
                     class="relative group mb-16 sm:mb-24 lg:mb-32 max-w-5xl mx-auto input-container-wrapper reveal-on-scroll delay-100">
                     <div
@@ -191,7 +174,6 @@
                         <textarea id="suggestionInput"
                             class="w-full bg-transparent border-none outline-none text-lg sm:text-2xl placeholder:text-white/20 resize-none min-h-[120px] sm:min-h-[160px] lg:min-h-[180px] font-light leading-relaxed tracking-wide custom-scrollbar text-white/90 transition-all duration-500"
                             placeholder="Shape the future of ATLAS..."></textarea>
-
                         <div
                             class="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/10 gap-6 transition-colors duration-500 group-focus-within:border-white/20">
                             <div
@@ -216,14 +198,11 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="suggestionsContainer"
-                    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 relative z-10">
-                </div>
+                    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 relative z-10"></div>
             </div>
         </section>
     </main>
-
     <footer
         class="relative z-20 border-t border-white/5 bg-[#020202] py-12 sm:py-20 lg:py-24 flex flex-col items-center gap-8 sm:gap-12 overflow-hidden">
         <div
@@ -251,10 +230,8 @@
         </a>
         <p
             class="text-[8px] sm:text-[9px] lg:text-[10px] tracking-[0.4em] sm:tracking-[0.7em] opacity-20 uppercase font-mono text-center px-4 hover:opacity-50 transition-opacity duration-500 cursor-default">
-            © 2026 ATLAS — ALL RIGHTS RESERVED
-        </p>
+            © 2026 ATLAS — ALL RIGHTS RESERVED</p>
     </footer>
-
     <button id="backToTop"
         class="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 w-12 h-12 sm:w-14 sm:h-14 bg-white/5 border border-white/10 rounded-full backdrop-blur-xl flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 hover:scale-110 transition-all duration-500 z-50 opacity-0 pointer-events-none translate-y-10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -262,7 +239,6 @@
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
     </button>
-
     <div id="customPopup"
         class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-all duration-700 p-4 sm:p-6">
         <div class="absolute inset-0 bg-[#020202]/95 backdrop-blur-3xl overlay-bg transition-opacity duration-700">
@@ -280,7 +256,6 @@
                 class="w-full py-3.5 sm:py-5 bg-white text-black font-black text-[10px] sm:text-[11px] lg:text-[13px] tracking-[0.3em] sm:tracking-[0.4em] rounded-full hover:bg-gray-200 transition-all duration-500 uppercase shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] hover:scale-[1.02] active:scale-95">ACKNOWLEDGE</button>
         </div>
     </div>
-
     <script src="./Scripts/Home.js"></script>
     <script>
         async function updateUI() {
@@ -302,7 +277,6 @@
             }
             fetchSuggestions();
         }
-
         async function fetchSuggestions() {
             try {
                 const res = await fetch('/api/suggestions/styled');
@@ -313,20 +287,17 @@
                 suggestions.forEach(s => {
                     const isModerated = s.approved || s.rejected;
                     const statusHtml = s.approved ? `<span class="text-green-500 text-xs font-bold uppercase tracking-widest block mb-4">APPROVED</span>` : (s.rejected ? `<span class="text-red-500 text-xs font-bold uppercase tracking-widest block mb-4">REJECTED</span>` : `<span class="text-yellow-500 text-xs font-bold uppercase tracking-widest block mb-4">PENDING</span>`);
-
                     let adminHtml = '';
-                    if (window.atlasUser && window.atlasUser.isStaff && !isModerated) {
+                    if (window.atlasUser && window.atlasUser.isStaff) {
                         adminHtml = `
                         <div class="flex gap-3 mt-5 pt-5 border-t border-white/10">
                             <button onclick="moderateSuggestion('${s.id}', 'approve')" class="px-4 py-2 bg-green-500/10 text-green-500 border border-green-500/20 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-green-500/20 transition-all w-full">Approve</button>
                             <button onclick="moderateSuggestion('${s.id}', 'reject')" class="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-red-500/20 transition-all w-full">Reject</button>
                         </div>`;
                     }
-
                     const pointerClass = isModerated ? "opacity-40 cursor-not-allowed" : "cursor-pointer hover:bg-white/10";
                     const clickLike = isModerated ? "" : `onclick="reactSuggestion('${s.id}', 'like')"`;
                     const clickDislike = isModerated ? "" : `onclick="reactSuggestion('${s.id}', 'dislike')"`;
-
                     container.innerHTML += `
                     <div class="bg-white/[0.02] border ${s.approved ? 'border-green-500/30' : (s.rejected ? 'border-red-500/30' : 'border-white/10')} p-6 sm:p-8 rounded-3xl flex flex-col justify-between transition-all duration-500 hover:bg-white/[0.04]">
                         <div>
@@ -353,7 +324,6 @@
                 });
             } catch (e) { }
         }
-
         async function reactSuggestion(id, type) {
             const token = localStorage.getItem('atlas_token');
             if (!token) return;
@@ -364,7 +334,6 @@
             });
             fetchSuggestions();
         }
-
         async function moderateSuggestion(id, action) {
             const token = localStorage.getItem('atlas_token');
             if (!token) return;
@@ -375,7 +344,6 @@
             });
             fetchSuggestions();
         }
-
         updateUI();
     </script>
 </body>
