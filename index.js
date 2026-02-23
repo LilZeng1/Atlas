@@ -242,4 +242,33 @@ app.post("/api/suggestions/react", async (req, res) => {
     }
 });
 
+// Adding Approve() and rejects() to suggestions.
+app.post("/api/suggestions/moderate", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1]
+    if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
+    const session = sessions.get(token)
+    const member = await getMemberData(session.user.id); // Getting member data()
+    if (!member || !member.roles.some(r => ALLOWED_ROLES.includes(r))) {
+        return res.status(403).json({ error: "Forbidden" })
+    }
+    const { id, action } = req.body
+    try {
+
+        const suggestion = await Suggestion.findOne({ id })
+        if (!suggestion) return res.status(404).json({ error: "Not Found..." })
+
+        if (action === "approve") {
+            suggestion.approved = true
+        } else if (action === "reject") {
+            await Suggestion.deleteOne({ id })
+            return res.json({ success: true })
+        }
+        await suggestion.save()
+        res.json({ success: true })
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ error: "Server error" })
+    }
+});
+
 app.listen(process.env.PORT || 3000)
