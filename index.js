@@ -271,4 +271,25 @@ app.post("/api/suggestions/moderate", async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT || 3000)
+// Adding style to approved and rejected suggestions.
+app.get("/api/suggestions/styled", async (req, res) => {
+    try {
+        const suggestions = await Suggestion.find().sort({ timestamp: -1 })
+        const styledSuggestions = suggestions.map(s => ({
+            id: s.id,
+            text: s.text,
+            user: s.user,
+            likes: s.likes,
+            dislikes: s.dislikes,
+            timestamp: s.timestamp,
+            approved: s.approved || false,
+            style: s.approved ? "approved" : (s.rejected ? "rejected" : "pending")
+        }))
+        res.json(styledSuggestions)
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ error: "Database error" })
+    }
+})
+
+app.listen(process.env.PORT || 3000);
