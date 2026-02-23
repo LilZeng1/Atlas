@@ -23,7 +23,9 @@ const suggestionSchema = new mongoose.Schema({
     user: Object,
     likes: [String],
     dislikes: [String],
-    timestamp: Date
+    timestamp: Date,
+    approved: { type: Boolean, default: false },
+    rejected: { type: Boolean, default: false }
 }, { collection: "suggestions" })
 
 const Suggestion = mongoose.model("Suggestion", suggestionSchema)
@@ -46,14 +48,7 @@ const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
 const sessions = new Map()
 const authStates = new Map()
 
-const STAFF_ROLES = {
-    OWNER: "1470530769641410560",
-    ABSOLUTE_GOD: "1468394439226691725",
-    ADMIN: "1472759257769312256",
-    STAFF: "1472058610308612157"
-}
-
-const ALLOWED_ROLES = Object.values(STAFF_ROLES)
+const ALLOWED_USERNAMES = ["lilzeng1", "2uom", "godhimself__sdsd", "09.i", "shira.5", "yra6", "eng.joseph666"]
 
 async function getMemberData(userId) {
     try {
@@ -71,8 +66,8 @@ app.get("/api/user", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ logged: false })
     const session = sessions.get(token)
+    const isStaff = ALLOWED_USERNAMES.includes(session.user.username)
     const member = await getMemberData(session.user.id)
-    const isStaff = member ? member.roles.some(r => ALLOWED_ROLES.includes(r)) : false
     res.json({
         logged: true,
         user: session.user,
@@ -126,8 +121,8 @@ app.get("/api/auth/discord/redirect", async (req, res) => {
 app.get("/api/guild/search", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
-    const member = await getMemberData(sessions.get(token).user.id)
-    if (!member || !member.roles.some(r => ALLOWED_ROLES.includes(r))) {
+    const session = sessions.get(token)
+    if (!ALLOWED_USERNAMES.includes(session.user.username)) {
         return res.status(403).json({ error: "Forbidden" })
     }
     const q = req.query.q
@@ -146,8 +141,8 @@ app.get("/api/guild/search", async (req, res) => {
 app.post("/api/guild/action", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
-    const executor = await getMemberData(sessions.get(token).user.id)
-    if (!executor || !executor.roles.some(r => ALLOWED_ROLES.includes(r))) {
+    const session = sessions.get(token)
+    if (!ALLOWED_USERNAMES.includes(session.user.username)) {
         return res.status(403).json({ error: "Forbidden" })
     }
     const { targetId, action } = req.body
@@ -180,14 +175,15 @@ app.post("/api/suggestions", async (req, res) => {
     const { text } = req.body
     if (!text || text.trim().length < 5) return res.status(400).json({ error: "Invalid text" })
     try {
-        console.log('server is starting ✅')
         const newSuggestion = new Suggestion({
             id: crypto.randomBytes(16).toString("hex"),
             text: text.trim(),
             user: session.user,
             likes: [],
             dislikes: [],
-            timestamp: new Date()
+            timestamp: new Date(),
+            approved: false,
+            rejected: false
         })
         await newSuggestion.save()
         if (WEBHOOK_URL) {
@@ -209,7 +205,7 @@ app.post("/api/suggestions", async (req, res) => {
                             url: avatarUrl
                         },
                         footer: {
-                            text: `${suggestion.likes.length} Likes | ${suggestion.dislikes.length} Dislikes`
+                            text: `0 Likes | 0 Dislikes`
                         },
                         timestamp: new Date().toISOString()
                     }]
@@ -230,6 +226,7 @@ app.post("/api/suggestions/react", async (req, res) => {
     try {
         const suggestion = await Suggestion.findOne({ id })
         if (!suggestion) return res.status(404).json({ error: "Not found" })
+        if (suggestion.approved || suggestion.rejected) return res.status(400).json({ error: "Cannot react to a moderated suggestion" })
         const userId = session.user.id
         suggestion.likes = suggestion.likes.filter(uid => uid !== userId)
         suggestion.dislikes = suggestion.dislikes.filter(uid => uid !== userId)
@@ -240,38 +237,62 @@ app.post("/api/suggestions/react", async (req, res) => {
     } catch {
         res.status(500).json({ error: "Server error" })
     }
-});
+})
 
-// Adding Approve() and rejects() to suggestions.
+// Approval and rejection System() for Suggestions()
 app.post("/api/suggestions/moderate", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-    const member = await getMemberData(session.user.id); // Getting member data()
-    if (!member || !member.roles.some(r => ALLOWED_ROLES.includes(r))) {
+    if (!ALLOWED_USERNAMES.includes(session.user.username)) {
         return res.status(403).json({ error: "Forbidden" })
     }
     const { id, action } = req.body
     try {
-
         const suggestion = await Suggestion.findOne({ id })
-        if (!suggestion) return res.status(404).json({ error: "Not Found..." })
-
+        if (!suggestion) return res.status(404).json({ error: "Not Found" })
         if (action === "approve") {
             suggestion.approved = true
+            suggestion.rejected = false
         } else if (action === "reject") {
-            await Suggestion.deleteOne({ id })
-            return res.json({ success: true })
+            suggestion.rejected = true
+            suggestion.approved = false
         }
         await suggestion.save()
+        if (WEBHOOK_URL) {
+            const actionText = action === "approve" ? "Approved" : "Rejected"
+            const colorHex = action === "approve" ? 0x00ff00 : 0xff0000
+            const modAvatarUrl = session.user.avatar ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/0.png`
+            await fetch(WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    embeds: [{
+                        author: {
+                            name: `${session.user.username} ${actionText} a Suggestion`,
+                            icon_url: modAvatarUrl
+                        },
+                        title: `Suggestion by ${suggestion.user.username}`,
+                        description: suggestion.text,
+                        color: colorHex,
+                        thumbnail: {
+                            url: "https://cdn.discordapp.com/icons/1468389283185557649/a5d4750b250533a1f765faf2df60862e.webp?size=1024"
+                        },
+                        footer: {
+                            text: `${suggestion.likes.length} Likes | ${suggestion.dislikes.length} Dislikes`
+                        },
+                        timestamp: new Date().toISOString()
+                    }]
+                })
+            }).catch(() => { })
+        }
         res.json({ success: true })
     } catch (err) {
-        console.error(err)
         res.status(500).json({ error: "Server error" })
     }
-});
+})
 
-// Adding style to approved and rejected suggestions.
+// Styling Approval & Rejection System()
 app.get("/api/suggestions/styled", async (req, res) => {
     try {
         const suggestions = await Suggestion.find().sort({ timestamp: -1 })
@@ -283,13 +304,13 @@ app.get("/api/suggestions/styled", async (req, res) => {
             dislikes: s.dislikes,
             timestamp: s.timestamp,
             approved: s.approved || false,
+            rejected: s.rejected || false,
             style: s.approved ? "approved" : (s.rejected ? "rejected" : "pending")
         }))
         res.json(styledSuggestions)
     } catch (err) {
-        console.error(err)
         res.status(500).json({ error: "Database error" })
     }
-})
+});
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 3000)
