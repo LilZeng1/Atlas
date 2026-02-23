@@ -239,47 +239,50 @@ app.post("/api/suggestions/react", async (req, res) => {
     }
 })
 
-// Approval and rejection System() for Suggestions()
+// Approval and rejection System() for Suggestions() - Only allowed for specific usernames defined in ALLOWED_USERNAMES array. This endpoint allows moderators to approve or reject suggestions, updating their status in the database and optionally sending a notification to a Discord webhook.
 app.post("/api/suggestions/moderate", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
+
     if (!ALLOWED_USERNAMES.includes(session.user.username)) {
         return res.status(403).json({ error: "Forbidden" })
     }
+
     const { id, action } = req.body
+    if (!["approve", "reject"].includes(action)) {
+        return res.status(400).json({ error: "Invalid action" })
+    }
+
     try {
         const suggestion = await Suggestion.findOne({ id })
-        if (!suggestion) return res.status(404).json({ error: "Not Found" })
-        if (action === "approve") {
-            suggestion.approved = true
-            suggestion.rejected = false
-        } else if (action === "reject") {
-            suggestion.rejected = true
-            suggestion.approved = false
+        if (!suggestion) return res.status(404).json({ error: "Not found" })
+        
+        if (suggestion.approved || suggestion.rejected) {
+            return res.status(400).json({ error: "Suggestion already moderated" })
         }
+        
+        suggestion.approved = action === "approve"
+        suggestion.rejected = action === "reject"
+
         await suggestion.save()
         if (WEBHOOK_URL) {
-            const actionText = action === "approve" ? "Approved" : "Rejected"
-            const colorHex = action === "approve" ? 0x00ff00 : 0xff0000
-            const modAvatarUrl = session.user.avatar ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/0.png`
+            const avatarUrl = session.user.avatar
+                ? `https://cdn.discordapp.com/avatars/${session.user.id}/${session.user.avatar}.png`
+                : `https://cdn.discordapp.com/embed/avatars/0.png`
             await fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     embeds: [{
-                        author: {
-                            name: `${session.user.username} ${actionText} a Suggestion`,
-                            icon_url: modAvatarUrl
-                        },
-                        title: `Suggestion by ${suggestion.user.username}`,
-                        description: suggestion.text,
-                        color: colorHex,
+                        title: `Suggestion ${action === "approve" ? "Approved" : "Rejected"}`,
+                        description: `Suggestion ID: ${id}`,
+                        color: action === "approve" ? 0x00ff00 : 0xff0000,
                         thumbnail: {
-                            url: "https://cdn.discordapp.com/icons/1468389283185557649/a5d4750b250533a1f765faf2df60862e.webp?size=1024"
+                            url: avatarUrl
                         },
                         footer: {
-                            text: `${suggestion.likes.length} Likes | ${suggestion.dislikes.length} Dislikes`
+                            text: `${session.user.username} moderated this suggestion`
                         },
                         timestamp: new Date().toISOString()
                     }]
@@ -290,7 +293,7 @@ app.post("/api/suggestions/moderate", async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: "Server error" })
     }
-})
+});
 
 // Styling Approval & Rejection System()
 app.get("/api/suggestions/styled", async (req, res) => {
