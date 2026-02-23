@@ -49,8 +49,14 @@ const { BOT_TOKEN, CLIENT_ID, CLIENT_SECRET, BASE_URL, GUILD_ID, WEBHOOK_URL } =
 const REDIRECT_URI = `${BASE_URL}/api/auth/discord/redirect`
 const sessions = new Map()
 const authStates = new Map()
+
 const ALLOWED_USERNAMES = ["lilzeng1", "2uom", "godhimself__sdsd", "09.i", "shira.5", "yra6", "eng.joseph666"]
 const ADMIN_ID = "1447924209677373480"
+
+const checkStaff = (session) => {
+    if (!session || !session.user) return false
+    return ALLOWED_USERNAMES.includes(session.user.username) || session.user.id === ADMIN_ID
+}
 
 async function getMemberData(userId) {
     try {
@@ -68,7 +74,7 @@ app.get("/api/user", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ logged: false })
     const session = sessions.get(token)
-    const isStaff = ALLOWED_USERNAMES.includes(session.user.username) || session.user.id === ADMIN_ID
+    const isStaff = checkStaff(session)
     const member = await getMemberData(session.user.id)
     res.json({
         logged: true,
@@ -124,7 +130,7 @@ app.get("/api/guild/search", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-    if (!ALLOWED_USERNAMES.includes(session.user.username) && session.user.id !== ADMIN_ID) return res.status(403).json({ error: "Forbidden" })
+    if (!checkStaff(session)) return res.status(403).json({ error: "Forbidden" })
     const q = req.query.q
     if (!q) return res.json([])
     try {
@@ -142,7 +148,7 @@ app.post("/api/guild/action", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-    if (!ALLOWED_USERNAMES.includes(session.user.username) && session.user.id !== ADMIN_ID) return res.status(403).json({ error: "Forbidden" })
+    if (!checkStaff(session)) return res.status(403).json({ error: "Forbidden" })
     const { targetId, action } = req.body
     let url = `https://discord.com/api/v10/guilds/${GUILD_ID}`
     let method = action === "kick" ? "DELETE" : (action === "ban" ? "PUT" : "")
@@ -232,7 +238,7 @@ app.post("/api/suggestions/moderate", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]
     if (!token || !sessions.has(token)) return res.status(401).json({ error: "Unauthorized" })
     const session = sessions.get(token)
-    if (!ALLOWED_USERNAMES.includes(session.user.username) && session.user.id !== ADMIN_ID) return res.status(403).json({ error: "Forbidden" })
+    if (!checkStaff(session)) return res.status(403).json({ error: "Forbidden" })
     const { id, action } = req.body
     if (!["approve", "reject"].includes(action)) return res.status(400).json({ error: "Invalid action" })
     try {
