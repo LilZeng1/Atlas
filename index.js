@@ -1,4 +1,3 @@
-// Imports
 import express from "express"
 import fetch from "node-fetch"
 import dotenv from "dotenv"
@@ -201,7 +200,7 @@ app.post("/api/suggestions", async (req, res) => {
                         description: text.trim(),
                         color: 0xffffff,
                         thumbnail: { url: avatarUrl },
-                        footer: { text: `0 Likes | 0 Dislikes` },
+                        footer: { text: `${newSuggestion.likes.length} Likes | ${newSuggestion.dislikes.length} Dislikes` },
                         timestamp: new Date().toISOString()
                     }]
                 })
